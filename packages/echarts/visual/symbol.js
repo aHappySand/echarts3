@@ -40,7 +40,7 @@ const seriesSymbolTask = {
     var symbolOptions = {};
     var symbolOptionsCb = {};
     var hasCallback = false;
-    for (var i = 0; i < SYMBOL_PROPS_WITH_CB.length; i++) {
+    for (let i = 0; i < SYMBOL_PROPS_WITH_CB.length; i++) {
       var symbolPropName = SYMBOL_PROPS_WITH_CB[i];
       var val = seriesModel.get(symbolPropName);
       if (isFunction(val)) {
@@ -51,7 +51,6 @@ const seriesSymbolTask = {
       }
     }
     symbolOptions.symbol = symbolOptions.symbol || seriesModel.defaultSymbol;
-    debugger;
     data.setVisual(extend({
       legendIcon: seriesModel.legendIcon || symbolOptions.symbol,
       symbolKeepAspect: seriesModel.get('symbolKeepAspect')
@@ -65,7 +64,7 @@ const seriesSymbolTask = {
     function dataEach(data, idx) {
       var rawValue = seriesModel.getRawValue(idx);
       var params = seriesModel.getDataParams(idx);
-      for (var i = 0; i < symbolPropsCb.length; i++) {
+      for (let i = 0; i < symbolPropsCb.length; i++) {
         var symbolPropName = symbolPropsCb[i];
         data.setItemVisual(idx, symbolPropName, symbolOptionsCb[symbolPropName](rawValue, params));
       }
@@ -90,7 +89,7 @@ const dataSymbolTask = {
 
     function dataEach(data, idx) {
       var itemModel = data.getItemModel(idx);
-      for (var i = 0; i < SYMBOL_PROPS.length; i++) {
+      for (let i = 0; i < SYMBOL_PROPS.length; i++) {
         var symbolPropName = SYMBOL_PROPS[i];
         var val = itemModel.getShallow(symbolPropName, true);
         if (val != null) {

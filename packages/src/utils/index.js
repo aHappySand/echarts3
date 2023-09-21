@@ -144,7 +144,7 @@ void main() {
         value: canvas.width
       },
       height: {
-        value: data.canvas.height
+        value: canvas.height
       },
       domWidth: {
         value: renderer.domElement.width
@@ -181,3 +181,9 @@ export const distoryObject = (object, parent) => {
     if (children.length) children.forEach((item) => distoryObject(item, object));
   });
 };
+
+
+export function getDataType(o) {
+  const os = Object.prototype.toString.call(o).split(' ');
+  return os[1].replace(']', '');
+}

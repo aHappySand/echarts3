@@ -24,13 +24,14 @@ const ScatterSeriesModel = /** @class */ (function (_super) {
   __extends(ScatterSeriesModel, _super);
 
   function ScatterSeriesModel() {
-    var _this = _super !== null && _super.apply(this, arguments) || this;
+    // eslint-disable-next-line prefer-rest-params
+    var _this = (_super !== null && _super.apply(this, arguments)) || this;
     _this.type = ScatterSeriesModel.type;
     _this.hasSymbolVisual = true;
     return _this;
   }
 
-  ScatterSeriesModel.prototype.getInitialData = function (option, ecModel) {
+  ScatterSeriesModel.prototype.getInitialData = function () {
     return createSeriesData(null, this, {
       useEncodeDefaulter: true
     });

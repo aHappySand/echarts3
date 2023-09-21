@@ -9,10 +9,10 @@ const OrientedBoundingRect = (function () {
     this._corners = [];
     this._axes = [];
     this._origin = [0, 0];
-    for (var i = 0; i < 4; i++) {
+    for (let i = 0; i < 4; i++) {
       this._corners[i] = new Point();
     }
-    for (var i = 0; i < 2; i++) {
+    for (let i = 0; i < 2; i++) {
       this._axes[i] = new Point();
     }
     if (rect) {
@@ -32,7 +32,7 @@ const OrientedBoundingRect = (function () {
     corners[2].set(x2, y2);
     corners[3].set(x, y2);
     if (transform) {
-      for (var i = 0; i < 4; i++) {
+      for (let i = 0; i < 4; i++) {
         corners[i].transform(transform);
       }
     }
@@ -40,7 +40,7 @@ const OrientedBoundingRect = (function () {
     Point.sub(axes[1], corners[3], corners[0]);
     axes[0].normalize();
     axes[1].normalize();
-    for (var i = 0; i < 2; i++) {
+    for (let i = 0; i < 2; i++) {
       this._origin[i] = axes[i].dot(corners[0]);
     }
   };
@@ -68,7 +68,7 @@ const OrientedBoundingRect = (function () {
   };
   OrientedBoundingRect.prototype._intersectCheckOneSide = function (self, other, minTv, maxTv, noMtv, inverse) {
     var overlapped = true;
-    for (var i = 0; i < 2; i++) {
+    for (let i = 0; i < 2; i++) {
       var axis = this._axes[i];
       this._getProjMinMaxOnAxis(i, self._corners, extent);
       this._getProjMinMaxOnAxis(i, other._corners, extent2);
@@ -106,7 +106,7 @@ const OrientedBoundingRect = (function () {
     var proj = corners[0].dot(axis) + origin[dim];
     var min = proj;
     var max = proj;
-    for (var i = 1; i < corners.length; i++) {
+    for (let i = 1; i < corners.length; i++) {
       var proj_1 = corners[i].dot(axis) + origin[dim];
       min = Math.min(proj_1, min);
       max = Math.max(proj_1, max);

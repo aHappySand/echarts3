@@ -68,7 +68,7 @@ const Grid = /** @class */ (function () {
       }
       var axisNeedsAlign = [];
       // Process once and calculate the ticks for those don't use alignTicks.
-      for (var i = len - 1; i >= 0; i--) {
+      for (let i = len - 1; i >= 0; i--) {
         var idx = +axesIndices[i]; // Convert to number.
         var axis = axes[idx];
         var model = axis.model;
@@ -179,7 +179,7 @@ const Grid = /** @class */ (function () {
       yAxisIndex = xAxisIndex.yAxisIndex;
       xAxisIndex = xAxisIndex.xAxisIndex;
     }
-    for (var i = 0, coordList = this._coordsList; i < coordList.length; i++) {
+    for (let i = 0, coordList = this._coordsList; i < coordList.length; i++) {
       if (coordList[i].getAxis('x').index === xAxisIndex ||
         coordList[i].getAxis('y').index === yAxisIndex) {
         return coordList[i];
@@ -402,7 +402,7 @@ const Grid = /** @class */ (function () {
       var xAxisModel = axesModelMap.xAxisModel;
       var yAxisModel = axesModelMap.yAxisModel;
       var gridModel = xAxisModel.getCoordSysModel();
-      if (__DEV__) {
+      if (self.__DEV__) {
         if (!gridModel) {
           throw new Error(`Grid "${retrieve3(xAxisModel.get('gridIndex'), xAxisModel.get('gridId'), 0)}" not found`);
         }
@@ -452,7 +452,7 @@ function fixAxisOnZero(axesMap, otherAxisDim, axis,
     }
   } else {
     // Find the first available other axis.
-    for (var idx in otherAxes) {
+    for (let idx in otherAxes) {
       if (otherAxes.hasOwnProperty(idx) &&
         canOnZeroToAxis(otherAxes[idx]) &&
         // Consider that two Y axes on one value axis,

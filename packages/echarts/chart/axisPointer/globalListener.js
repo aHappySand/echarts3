@@ -16,8 +16,8 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-import * as zrUtil from 'zrender/src/core/util';
-import env from 'zrender/src/core/env';
+import * as zrUtil from '../../../zrender/core/util';
+import env from '../../../zrender/core/env';
 import { makeInner } from '../../util/model';
 
 const inner = makeInner();

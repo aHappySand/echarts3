@@ -1,4 +1,4 @@
-export const DEFAULT_FONT_SIZE = 12;
+export const DEFAULT_FONT_SIZE = 14;
 export const DEFAULT_FONT_FAMILY = 'sans-serif';
 export const DEFAULT_FONT = `${DEFAULT_FONT_SIZE}px ${DEFAULT_FONT_FAMILY}`;
 const OFFSET = 20;
@@ -10,7 +10,7 @@ function getTextWidthMap(mapStr) {
   if (typeof JSON === 'undefined') {
     return map;
   }
-  for (var i = 0; i < mapStr.length; i++) {
+  for (let i = 0; i < mapStr.length; i++) {
     var char = String.fromCharCode(i + 32);
     var size = (mapStr.charCodeAt(i) - OFFSET) / SCALE;
     map[char] = size;
@@ -21,8 +21,7 @@ function getTextWidthMap(mapStr) {
 export const DEFAULT_TEXT_WIDTH_MAP = getTextWidthMap(defaultWidthMapStr);
 export const platformApi = {
   createCanvas() {
-    return typeof document !== 'undefined' &&
-      document.createElement('canvas');
+    return new OffscreenCanvas(500, 30);
   },
   measureText: (function () {
     var _ctx;
@@ -46,7 +45,7 @@ export const platformApi = {
       if (font.indexOf('mono') >= 0) {
         width = fontSize * text.length;
       } else {
-        for (var i = 0; i < text.length; i++) {
+        for (let i = 0; i < text.length; i++) {
           var preCalcWidth = DEFAULT_TEXT_WIDTH_MAP[text[i]];
           width += preCalcWidth == null ? fontSize : (preCalcWidth * fontSize);
         }
@@ -54,17 +53,10 @@ export const platformApi = {
       return { width };
     };
   }()),
-  loadImage(src, onload, onerror) {
-    var image = new Image();
-    image.onload = onload;
-    image.onerror = onerror;
-    image.src = src;
-    return image;
-  }
 };
 
 export function setPlatformAPI(newPlatformApis) {
-  for (var key in platformApi) {
+  for (const key in platformApi) {
     if (newPlatformApis[key]) {
       platformApi[key] = newPlatformApis[key];
     }

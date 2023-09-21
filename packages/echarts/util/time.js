@@ -154,7 +154,7 @@ export function leveledFormat(tick, idx, formatter, lang, isUTC) {
   } else {
     var defaults = zrUtil.extend({}, defaultLeveledFormatter);
     if (tick.level > 0) {
-      for (var i = 0; i < primaryTimeUnits.length; ++i) {
+      for (let i = 0; i < primaryTimeUnits.length; ++i) {
         defaults[primaryTimeUnits[i]] = `{primary|${defaults[primaryTimeUnits[i]]}}`;
       }
     }
@@ -169,7 +169,7 @@ export function leveledFormat(tick, idx, formatter, lang, isUTC) {
     } else if (mergedFormatter.inherit) {
       // Unit formatter is not defined and should inherit from bigger units
       var targetId = timeUnits.indexOf(unit);
-      for (var i = targetId - 1; i >= 0; --i) {
+      for (let i = targetId - 1; i >= 0; --i) {
         if (mergedFormatter[unit]) {
           template = mergedFormatter[unit];
           break;

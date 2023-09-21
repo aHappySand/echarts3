@@ -75,7 +75,7 @@ const AnimationWrap = /** @class */ (function () {
         _this._finishedCallback && _this._finishedCallback();
       }
     };
-    for (var i = 0, len = this._storage.length; i < len; i++) {
+    for (let i = 0, len = this._storage.length; i < len; i++) {
       var item = this._storage[i];
       item.el.animateTo(item.target, {
         duration: item.duration,

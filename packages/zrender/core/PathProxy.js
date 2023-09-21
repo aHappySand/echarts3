@@ -216,7 +216,7 @@ const PathProxy = (function () {
     if (!(this.data && this.data.length === len) && hasTypedArray) {
       this.data = new Float32Array(len);
     }
-    for (var i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
       this.data[i] = data[i];
     }
     this._len = len;
@@ -228,15 +228,15 @@ const PathProxy = (function () {
     var len = path.length;
     var appendSize = 0;
     var offset = this._len;
-    for (var i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
       appendSize += path[i].len();
     }
     if (hasTypedArray && (this.data instanceof Float32Array)) {
       this.data = new Float32Array(offset + appendSize);
     }
-    for (var i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
       var appendPathData = path[i].data;
-      for (var k = 0; k < appendPathData.length; k++) {
+      for (let k = 0; k < appendPathData.length; k++) {
         this.data[offset++] = appendPathData[k];
       }
     }
@@ -251,7 +251,7 @@ const PathProxy = (function () {
       this._expandData();
       data = this.data;
     }
-    for (var i = 0; i < arguments.length; i++) {
+    for (let i = 0; i < arguments.length; i++) {
       data[this._len++] = arguments[i];
     }
   };
@@ -264,7 +264,7 @@ const PathProxy = (function () {
   PathProxy.prototype._expandData = function () {
     if (!(this.data instanceof Array)) {
       var newData = [];
-      for (var i = 0; i < this._len; i++) {
+      for (let i = 0; i < this._len; i++) {
         newData[i] = this.data[i];
       }
       this.data = newData;
@@ -377,7 +377,7 @@ const PathProxy = (function () {
     var pathSegLen = this._pathSegLen;
     var pathTotalLen = 0;
     var segCount = 0;
-    for (var i = 0; i < len;) {
+    for (let i = 0; i < len;) {
       var cmd = data[i++];
       var isFirst = i === 1;
       if (isFirst) {
@@ -500,7 +500,7 @@ const PathProxy = (function () {
         return;
       }
     }
-    lo: for (var i = 0; i < len;) {
+    lo: for (let i = 0; i < len;) {
       var cmd = d[i++];
       var isFirst = i === 1;
       if (isFirst) {

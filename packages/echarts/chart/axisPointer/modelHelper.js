@@ -217,7 +217,7 @@ function collectSeriesInfo(result, ecModel) {
 function getLinkGroupIndex(linksOption, axis) {
   var axisModel = axis.model;
   var dim = axis.dim;
-  for (var i = 0; i < linksOption.length; i++) {
+  for (let i = 0; i < linksOption.length; i++) {
     var linkOption = linksOption[i] || {};
     if (checkPropInLink(linkOption[`${dim}AxisId`], axisModel.id) ||
       checkPropInLink(linkOption[`${dim}AxisIndex`], axisModel.componentIndex) ||

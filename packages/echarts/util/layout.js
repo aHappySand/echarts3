@@ -405,7 +405,7 @@ export function mergeLayoutParam(targetOption, newOption, opt) {
       return newParams;
     }
     // Chose another param from targetOption by priority.
-    for (var i = 0; i < names.length; i++) {
+    for (let i = 0; i < names.length; i++) {
       var name_1 = names[i];
       if (!hasProp(newParams, name_1) && hasProp(targetOption, name_1)) {
         newParams[name_1] = targetOption[name_1];

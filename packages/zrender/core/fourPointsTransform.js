@@ -16,7 +16,7 @@ function determinant(rows, rank, rowStart, rowMask, colMask, detCache) {
     subRowStart++;
   }
   var sum = 0;
-  for (var j = 0, colLocalIdx = 0; j < fullRank; j++) {
+  for (let j = 0, colLocalIdx = 0; j < fullRank; j++) {
     var colTag = 1 << j;
     if (!(colTag & colMask)) {
       sum += (colLocalIdx % 2 ? -1 : 1) * rows[rowStart][j] *
@@ -45,8 +45,8 @@ export function buildTransformer(src, dest) {
     return;
   }
   var vh = [];
-  for (var i = 0; i < 8; i++) {
-    for (var j = 0; j < 8; j++) {
+  for (let i = 0; i < 8; i++) {
+    for (let j = 0; j < 8; j++) {
       vh[j] == null && (vh[j] = 0);
       vh[j] += ((i + j) % 2 ? -1 : 1) *
         determinant(mA, 7, i === 0 ? 1 : 0, 1 << i, 1 << j, detCache) /

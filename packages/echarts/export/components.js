@@ -18,3 +18,4 @@
 */
 export { install as GridComponent } from '../component/grid/install';
 export { install as TitleComponent } from '../component/title/install';
+export { install as TooltipComponent } from '../component/tooltip/install';

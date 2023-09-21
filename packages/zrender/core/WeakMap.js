@@ -1,4 +1,4 @@
-const wmUniqueIndex = Math.round(Math.random() * 9);
+let wmUniqueIndex = Math.round(Math.random() * 9);
 const supportDefineProperty = typeof Object.defineProperty === 'function';
 const WeakMap = (function () {
   function WeakMap() {

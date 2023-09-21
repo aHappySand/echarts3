@@ -42,7 +42,7 @@ const Model = /** @class */ (function () {
 
   Model.prototype.init = function (option, parentModel, ecModel) {
     var rest = [];
-    for (var _i = 3; _i < arguments.length; _i++) {
+    for (let _i = 3; _i < arguments.length; _i++) {
       rest[_i - 3] = arguments[_i];
     }
   };
@@ -130,7 +130,7 @@ const Model = /** @class */ (function () {
     if (!pathArr) {
       return obj;
     }
-    for (var i = 0; i < pathArr.length; i++) {
+    for (let i = 0; i < pathArr.length; i++) {
       // Ignore empty
       if (!pathArr[i]) {
         continue;

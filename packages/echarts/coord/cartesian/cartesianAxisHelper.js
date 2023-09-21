@@ -80,7 +80,7 @@ export function findAxisModels(seriesModel) {
   zrUtil.each(axisModelMap, (v, key) => {
     var axisType = key.replace(/Model$/, '');
     var axisModel = seriesModel.getReferringComponents(axisType, SINGLE_REFERRING).models[0];
-    if (__DEV__) {
+    if (self.__DEV__) {
       if (!axisModel) {
         throw new Error(`${axisType} "${zrUtil.retrieve3(seriesModel.get(`${axisType}Index`), seriesModel.get(`${axisType}Id`), 0)}" not found`);
       }

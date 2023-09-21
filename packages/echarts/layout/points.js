@@ -50,8 +50,8 @@ export default function pointsLayout(seriesType, forceStoreInTypedArray) {
           var points = useTypedArray && createFloat32Array(segCount * dimLen);
           var tmpIn = [];
           var tmpOut = [];
-          for (var i = params.start, offset = 0; i < params.end; i++) {
-            var point = void 0;
+          for (let i = params.start, offset = 0; i < params.end; i++) {
+            var point;
             if (dimLen === 1) {
               var x = store.get(dimIdx0, i);
               // NOTE: Make sure the second parameter is null to use default strategy.

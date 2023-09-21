@@ -144,18 +144,18 @@ function calculateFilteredExtent(axisRecordMap, seriesRecords) {
     // Time consuming, because this is a "block task".
     // Simple optimization for the vast majority of cases.
     if (singleCondDim && singleTarDim) {
-      for (var dataIdx = 0; dataIdx < dataLen; dataIdx++) {
+      for (let dataIdx = 0; dataIdx < dataLen; dataIdx++) {
         var condVal = data.get(singleCondDim, dataIdx);
         if (condAxis.scale.isInExtentRange(condVal)) {
           unionExtent(tarDimExtents[0], data.get(singleTarDim, dataIdx));
         }
       }
     } else {
-      for (var dataIdx = 0; dataIdx < dataLen; dataIdx++) {
-        for (var j = 0; j < condDimsLen; j++) {
+      for (let dataIdx = 0; dataIdx < dataLen; dataIdx++) {
+        for (let j = 0; j < condDimsLen; j++) {
           var condVal = data.get(condDims[j], dataIdx);
           if (condAxis.scale.isInExtentRange(condVal)) {
-            for (var k = 0; k < tarDimsLen; k++) {
+            for (let k = 0; k < tarDimsLen; k++) {
               unionExtent(tarDimExtents[k], data.get(tarDims[k], dataIdx));
             }
             // Any one dim is in range means satisfied.

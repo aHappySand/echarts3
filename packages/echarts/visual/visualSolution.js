@@ -27,7 +27,7 @@ const each = zrUtil.each;
 
 function hasKeys(obj) {
   if (obj) {
-    for (var name_1 in obj) {
+    for (let name_1 in obj) {
       if (obj.hasOwnProperty(name_1)) {
         return true;
       }
@@ -135,7 +135,7 @@ export function applyVisual(stateList, visualMappings, data, getValueState, scop
     var valueState = getValueState.call(scope, valueOrIndex);
     var mappings = visualMappings[valueState];
     var visualTypes = visualTypesMap[valueState];
-    for (var i = 0, len = visualTypes.length; i < len; i++) {
+    for (let i = 0, len = visualTypes.length; i < len; i++) {
       var type = visualTypes[i];
       mappings[type] && mappings[type].applyVisual(valueOrIndex, getVisual, setVisual);
     }
@@ -185,7 +185,7 @@ export function incrementalApplyVisual(stateList, visualMappings, getValueState,
         var valueState = getValueState(value);
         var mappings = visualMappings[valueState];
         var visualTypes = visualTypesMap[valueState];
-        for (var i = 0, len = visualTypes.length; i < len; i++) {
+        for (let i = 0, len = visualTypes.length; i < len; i++) {
           var type = visualTypes[i];
           mappings[type] && mappings[type].applyVisual(value, getVisual, setVisual);
         }

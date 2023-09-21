@@ -13,8 +13,7 @@ const tmpTransform = [];
 const originTransform = matrix.create();
 const abs = Math.abs;
 const Transformable = (function () {
-  function Transformable() {
-  }
+  function Transformable() {}
 
   Transformable.prototype.getLocalTransform = function (m) {
     return Transformable.getLocalTransform(this, m);
@@ -94,6 +93,7 @@ const Transformable = (function () {
       ancestors.push(transformNode);
       transformNode = transformNode.parent;
     }
+    // eslint-disable-next-line no-cond-assign
     while (transformNode = ancestors.pop()) {
       transformNode.updateTransform();
     }
@@ -237,7 +237,7 @@ export const TRANSFORMABLE_PROPS = [
 ];
 
 export function copyTransform(target, source) {
-  for (var i = 0; i < TRANSFORMABLE_PROPS.length; i++) {
+  for (let i = 0; i < TRANSFORMABLE_PROPS.length; i++) {
     var propName = TRANSFORMABLE_PROPS[i];
     target[propName] = source[propName];
   }

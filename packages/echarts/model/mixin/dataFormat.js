@@ -102,7 +102,7 @@ const DataFormatMixin = /** @class */ (function () {
         var dimLoose = dimStr;
         if (dimLoose.charAt(0) === '[' && dimLoose.charAt(len - 1) === ']') {
           dimLoose = +dimLoose.slice(1, len - 1); // Also support: '[]' => 0
-          if (__DEV__) {
+          if (self.__DEV__) {
             if (isNaN(dimLoose)) {
               error(`Invalide label formatter: @${dimStr}, only support @[0], @[1], @[2], ...`);
             }
@@ -160,7 +160,7 @@ export function normalizeTooltipFormatResult(result) {
     if (result.type) {
       markupFragment = result;
     } else {
-      if (__DEV__) {
+      if (self.__DEV__) {
         console.warn(`The return type of \`formatTooltip\` is not supported: ${makePrintable(result)}`);
       }
     }

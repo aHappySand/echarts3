@@ -69,7 +69,7 @@ const SeriesModel = /** @class */ (function (_super) {
     var data = this.getInitialData(option, ecModel);
     wrapData(data, this);
     this.dataTask.context.data = data;
-    if (__DEV__) {
+    if (self.__DEV__) {
       zrUtil.assert(data, 'getInitialData returned invalid data.');
     }
     inner(this).dataBeforeProcessed = data;
@@ -135,7 +135,7 @@ const SeriesModel = /** @class */ (function (_super) {
     // FIXME Performance ?
     if (data && !zrUtil.isTypedArray(data)) {
       var props = ['show'];
-      for (var i = 0; i < data.length; i++) {
+      for (let i = 0; i < data.length; i++) {
         if (data[i] && data[i].label) {
           modelUtil.defaultEmphasis(data[i], 'label', props);
         }
@@ -319,7 +319,7 @@ const SeriesModel = /** @class */ (function (_super) {
       this._selectedDataIndicesMap = {};
       return;
     }
-    for (var i = 0; i < innerDataIndices.length; i++) {
+    for (let i = 0; i < innerDataIndices.length; i++) {
       var dataIndex = innerDataIndices[i];
       var nameOrId = getSelectionKey(data, dataIndex);
       selectedMap[nameOrId] = false;
@@ -328,7 +328,7 @@ const SeriesModel = /** @class */ (function (_super) {
   };
   SeriesModel.prototype.toggleSelect = function (innerDataIndices, dataType) {
     var tmpArr = [];
-    for (var i = 0; i < innerDataIndices.length; i++) {
+    for (let i = 0; i < innerDataIndices.length; i++) {
       tmpArr[0] = innerDataIndices[i];
       this.isSelected(innerDataIndices[i], dataType)
         ? this.unselect(tmpArr, dataType)
@@ -342,7 +342,7 @@ const SeriesModel = /** @class */ (function (_super) {
     var selectedDataIndicesMap = this._selectedDataIndicesMap;
     var nameOrIds = zrUtil.keys(selectedDataIndicesMap);
     var dataIndices = [];
-    for (var i = 0; i < nameOrIds.length; i++) {
+    for (let i = 0; i < nameOrIds.length; i++) {
       var dataIndex = selectedDataIndicesMap[nameOrIds[i]];
       if (dataIndex >= 0) {
         dataIndices.push(dataIndex);
@@ -390,7 +390,7 @@ const SeriesModel = /** @class */ (function (_super) {
         option.selectedMap = {};
       }
       var selectedMap = option.selectedMap;
-      for (var i = 0; i < len; i++) {
+      for (let i = 0; i < len; i++) {
         var dataIndex = innerDataIndices[i];
         // TODO different types of data share same object.
         var nameOrId = getSelectionKey(data, dataIndex);

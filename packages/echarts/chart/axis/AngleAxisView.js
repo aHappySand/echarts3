@@ -160,8 +160,8 @@ const angelAxisElementsBuilders = {
     var tickLen = (tickModel.get('inside') ? -1 : 1) * minorTickModel.get('length');
     var radius = radiusExtent[getRadiusIdx(polar)];
     var lines = [];
-    for (var i = 0; i < minorTickAngles.length; i++) {
-      for (var k = 0; k < minorTickAngles[i].length; k++) {
+    for (let i = 0; i < minorTickAngles.length; i++) {
+      for (let k = 0; k < minorTickAngles[i].length; k++) {
         lines.push(new graphic.Line({
           shape: getAxisLineShape(polar, [radius, radius + tickLen], minorTickAngles[i][k].coord)
         }));
@@ -225,7 +225,7 @@ const angelAxisElementsBuilders = {
     var lineCount = 0;
     lineColors = lineColors instanceof Array ? lineColors : [lineColors];
     var splitLines = [];
-    for (var i = 0; i < ticksAngles.length; i++) {
+    for (let i = 0; i < ticksAngles.length; i++) {
       var colorIndex = (lineCount++) % lineColors.length;
       splitLines[colorIndex] = splitLines[colorIndex] || [];
       splitLines[colorIndex].push(new graphic.Line({
@@ -234,7 +234,7 @@ const angelAxisElementsBuilders = {
     }
     // Simple optimization
     // Batching the lines if color are the same
-    for (var i = 0; i < splitLines.length; i++) {
+    for (let i = 0; i < splitLines.length; i++) {
       group.add(graphic.mergePath(splitLines[i], {
         style: zrUtil.defaults({
           stroke: lineColors[i % lineColors.length]
@@ -251,8 +251,8 @@ const angelAxisElementsBuilders = {
     var minorSplitLineModel = angleAxisModel.getModel('minorSplitLine');
     var lineStyleModel = minorSplitLineModel.getModel('lineStyle');
     var lines = [];
-    for (var i = 0; i < minorTickAngles.length; i++) {
-      for (var k = 0; k < minorTickAngles[i].length; k++) {
+    for (let i = 0; i < minorTickAngles.length; i++) {
+      for (let k = 0; k < minorTickAngles[i].length; k++) {
         lines.push(new graphic.Line({
           shape: getAxisLineShape(polar, radiusExtent, minorTickAngles[i][k].coord)
         }));
@@ -279,7 +279,7 @@ const angelAxisElementsBuilders = {
     var r0 = Math.min(radiusExtent[0], radiusExtent[1]);
     var r1 = Math.max(radiusExtent[0], radiusExtent[1]);
     var clockwise = angleAxisModel.get('clockwise');
-    for (var i = 1, len = ticksAngles.length; i <= len; i++) {
+    for (let i = 1, len = ticksAngles.length; i <= len; i++) {
       var coord = i === len ? ticksAngles[0].coord : ticksAngles[i].coord;
       var colorIndex = (lineCount++) % areaColors.length;
       splitAreas[colorIndex] = splitAreas[colorIndex] || [];
@@ -299,7 +299,7 @@ const angelAxisElementsBuilders = {
     }
     // Simple optimization
     // Batching the lines if color are the same
-    for (var i = 0; i < splitAreas.length; i++) {
+    for (let i = 0; i < splitAreas.length; i++) {
       group.add(graphic.mergePath(splitAreas[i], {
         style: zrUtil.defaults({
           fill: areaColors[i % areaColors.length]

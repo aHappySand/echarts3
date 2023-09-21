@@ -146,7 +146,7 @@ const OptionManager = /** @class */ (function () {
       return result;
     }
     // Multi media may be applied, the latter defined media has higher priority.
-    for (var i = 0, len = mediaList.length; i < len; i++) {
+    for (let i = 0, len = mediaList.length; i < len; i++) {
       if (applyMediaQuery(mediaList[i].query, ecWidth, ecHeight)) {
         indices.push(i);
       }
@@ -260,7 +260,7 @@ function parseRawOption(
   if (hasMedia) {
     if (isArray(mediaOnRoot)) {
       each(mediaOnRoot, (singleMedia) => {
-        if (__DEV__) {
+        if (self.__DEV__) {
           // Real case of wrong config.
           if (singleMedia &&
             !singleMedia.option &&
@@ -279,7 +279,7 @@ function parseRawOption(
         }
       });
     } else {
-      if (__DEV__) {
+      if (self.__DEV__) {
         // Real case of wrong config.
         error('Illegal media option. Must be an array. Like { media: [ {...}, {...} ] }');
       }

@@ -151,7 +151,7 @@ export function getPrecision(val) {
   //     (see test/ut/spec/util/number.test.ts `getPrecision_equal_random`)
   if (val > 1e-14) {
     var e = 1;
-    for (var i = 0; i < 15; i++, e *= 10) {
+    for (let i = 0; i < 15; i++, e *= 10) {
       if (Math.round(val * e) / e === val) {
         return i;
       }
@@ -235,7 +235,7 @@ export function getPercentSeats(valueList, precision) {
     // Find next largest remainder.
     var max = Number.NEGATIVE_INFINITY;
     var maxId = null;
-    for (var i = 0, len = remainder.length; i < len; ++i) {
+    for (let i = 0, len = remainder.length; i < len; ++i) {
       if (remainder[i] > max) {
         max = remainder[i];
         maxId = i;
@@ -459,10 +459,10 @@ export function reformIntervals(list) {
   list.sort((a, b) => (littleThan(a, b, 0) ? -1 : 1));
   var curr = -Infinity;
   var currClose = 1;
-  for (var i = 0; i < list.length;) {
+  for (let i = 0; i < list.length;) {
     var interval = list[i].interval;
     var close_1 = list[i].close;
-    for (var lg = 0; lg < 2; lg++) {
+    for (let lg = 0; lg < 2; lg++) {
       if (interval[lg] <= curr) {
         interval[lg] = curr;
         close_1[lg] = (!lg ? 1 - currClose : 1);

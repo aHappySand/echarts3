@@ -410,7 +410,7 @@ function createTicks(ticksCoords, tickTransform, tickEndCoord, tickLineStyle, an
   var tickEls = [];
   var pt1 = [];
   var pt2 = [];
-  for (var i = 0; i < ticksCoords.length; i++) {
+  for (let i = 0; i < ticksCoords.length; i++) {
     var tickCoord = ticksCoords[i].coord;
     pt1[0] = tickCoord;
     pt1[1] = 0;
@@ -456,7 +456,7 @@ function buildAxisMajorTicks(group, transformGroup, axisModel, opt) {
   var ticksEls = createTicks(ticksCoords, transformGroup.transform, tickEndCoord, defaults(lineStyleModel.getLineStyle(), {
     stroke: axisModel.get(['axisLine', 'lineStyle', 'color'])
   }), 'ticks');
-  for (var i = 0; i < ticksEls.length; i++) {
+  for (let i = 0; i < ticksEls.length; i++) {
     group.add(ticksEls[i]);
   }
   return ticksEls;
@@ -477,9 +477,9 @@ function buildAxisMinorTicks(group, transformGroup, axisModel, tickDirection) {
   var minorTickLineStyle = defaults(lineStyleModel.getLineStyle(), defaults(axisModel.getModel('axisTick').getLineStyle(), {
     stroke: axisModel.get(['axisLine', 'lineStyle', 'color'])
   }));
-  for (var i = 0; i < minorTicksCoords.length; i++) {
+  for (let i = 0; i < minorTicksCoords.length; i++) {
     var minorTicksEls = createTicks(minorTicksCoords[i], transformGroup.transform, tickEndCoord, minorTickLineStyle, `minorticks_${i}`);
-    for (var k = 0; k < minorTicksEls.length; k++) {
+    for (let k = 0; k < minorTicksEls.length; k++) {
       group.add(minorTicksEls[k]);
     }
   }

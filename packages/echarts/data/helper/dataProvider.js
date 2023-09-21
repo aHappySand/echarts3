@@ -32,11 +32,12 @@ import {
   SERIES_LAYOUT_BY_ROW
 } from '../../util/types';
 
-const _a; var _b; var
-  _c;
+let _a;
+let _b;
+let _c;
 
-const providerMethods;
-const mountMethods;
+let providerMethods;
+let mountMethods;
 /**
  * If normal array used, mutable chunk size is supported.
  * If typed array used, chunk size must be fixed.
@@ -52,7 +53,7 @@ const DefaultDataProvider = /** @class */ (function () {
     var data = this._data = source.data;
     // Typed array. TODO IE10+?
     if (source.sourceFormat === SOURCE_FORMAT_TYPED_ARRAY) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         if (dimSize == null) {
           throw new Error('Typed array data must specify dimension size');
         }
@@ -92,7 +93,7 @@ const DefaultDataProvider = /** @class */ (function () {
       var startIndex = source.startIndex;
       var dimsDef = source.dimensionsDefine;
       var methods = providerMethods[getMethodMapKey(sourceFormat, seriesLayoutBy)];
-      if (__DEV__) {
+      if (self.__DEV__) {
         assert(methods, `Invalide sourceFormat: ${sourceFormat}`);
       }
       extend(provider, methods);
@@ -113,7 +114,7 @@ const DefaultDataProvider = /** @class */ (function () {
       var data = this._data;
       var dimSize = this._dimSize;
       var offset = dimSize * idx;
-      for (var i = 0; i < dimSize; i++) {
+      for (let i = 0; i < dimSize; i++) {
         out[i] = data[offset + i];
       }
       return out;
@@ -121,13 +122,13 @@ const DefaultDataProvider = /** @class */ (function () {
     var fillStorageForTypedArray = function (start, end, storage, extent) {
       var data = this._data;
       var dimSize = this._dimSize;
-      for (var dim = 0; dim < dimSize; dim++) {
+      for (let dim = 0; dim < dimSize; dim++) {
         var dimExtent = extent[dim];
         var min = dimExtent[0] == null ? Infinity : dimExtent[0];
         var max = dimExtent[1] == null ? -Infinity : dimExtent[1];
         var count = end - start;
         var arr = storage[dim];
-        for (var i = 0; i < count; i++) {
+        for (let i = 0; i < count; i++) {
           // appendData with TypedArray will always do replace in provider.
           var val = data[i * dimSize + dim];
           arr[start + i] = val;
@@ -162,7 +163,7 @@ const DefaultDataProvider = /** @class */ (function () {
         var data = this._data;
         each(newData, (newCol, key) => {
           var oldCol = data[key] || (data[key] = []);
-          for (var i = 0; i < (newCol || []).length; i++) {
+          for (let i = 0; i < (newCol || []).length; i++) {
             oldCol.push(newCol[i]);
           }
         });
@@ -175,7 +176,7 @@ const DefaultDataProvider = /** @class */ (function () {
       persistent: false,
       pure: true,
       appendData(newData) {
-        if (__DEV__) {
+        if (self.__DEV__) {
           assert(isTypedArray(newData), 'Added data must be TypedArray if data in initialization is TypedArray');
         }
         this._data = newData;
@@ -190,7 +191,7 @@ const DefaultDataProvider = /** @class */ (function () {
     _a);
 
     function appendDataSimply(newData) {
-      for (var i = 0; i < newData.length; i++) {
+      for (let i = 0; i < newData.length; i++) {
         this._data.push(newData[i]);
       }
     }
@@ -209,7 +210,7 @@ _a[`${SOURCE_FORMAT_ARRAY_ROWS}_${SERIES_LAYOUT_BY_ROW}`] = function (rawData, s
   idx += startIndex;
   var item = out || [];
   var data = rawData;
-  for (var i = 0; i < data.length; i++) {
+  for (let i = 0; i < data.length; i++) {
     var row = data[i];
     item[i] = row ? row[idx] : null;
   }
@@ -218,9 +219,9 @@ _a[`${SOURCE_FORMAT_ARRAY_ROWS}_${SERIES_LAYOUT_BY_ROW}`] = function (rawData, s
 _a[SOURCE_FORMAT_OBJECT_ROWS] = getItemSimply,
 _a[SOURCE_FORMAT_KEYED_COLUMNS] = function (rawData, startIndex, dimsDef, idx, out) {
   var item = out || [];
-  for (var i = 0; i < dimsDef.length; i++) {
+  for (let i = 0; i < dimsDef.length; i++) {
     var dimName = dimsDef[i].name;
-    if (__DEV__) {
+    if (self.__DEV__) {
       if (dimName == null) {
         throw new Error();
       }
@@ -235,7 +236,7 @@ _a);
 
 export function getRawSourceItemGetter(sourceFormat, seriesLayoutBy) {
   var method = rawSourceItemGetterMap[getMethodMapKey(sourceFormat, seriesLayoutBy)];
-  if (__DEV__) {
+  if (self.__DEV__) {
     assert(method, `Do not support get item on "${sourceFormat}", "${seriesLayoutBy}".`);
   }
   return method;
@@ -255,7 +256,7 @@ _b[`${SOURCE_FORMAT_ARRAY_ROWS}_${SERIES_LAYOUT_BY_ROW}`] = function (rawData, s
 _b[SOURCE_FORMAT_OBJECT_ROWS] = countSimply,
 _b[SOURCE_FORMAT_KEYED_COLUMNS] = function (rawData, startIndex, dimsDef) {
   var dimName = dimsDef[0].name;
-  if (__DEV__) {
+  if (self.__DEV__) {
     if (dimName == null) {
       throw new Error();
     }
@@ -268,7 +269,7 @@ _b);
 
 export function getRawSourceDataCounter(sourceFormat, seriesLayoutBy) {
   var method = rawSourceDataCounterMap[getMethodMapKey(sourceFormat, seriesLayoutBy)];
-  if (__DEV__) {
+  if (self.__DEV__) {
     assert(method, `Do not support count on "${sourceFormat}", "${seriesLayoutBy}".`);
   }
   return method;
@@ -296,7 +297,7 @@ _c);
 
 export function getRawSourceValueGetter(sourceFormat) {
   var method = rawSourceValueGetterMap[sourceFormat];
-  if (__DEV__) {
+  if (self.__DEV__) {
     assert(method, `Do not support get value on "${sourceFormat}".`);
   }
   return method;

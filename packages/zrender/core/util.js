@@ -37,7 +37,7 @@ const ctorFunction = function () {
 }.constructor;
 const protoFunction = ctorFunction ? ctorFunction.prototype : null;
 const protoKey = '__proto__';
-const idStart = 0x0907;
+let idStart = 0x0907;
 
 export function guid() {
   return idStart++;
@@ -45,7 +45,7 @@ export function guid() {
 
 export function logError() {
   var args = [];
-  for (var _i = 0; _i < arguments.length; _i++) {
+  for (let _i = 0; _i < arguments.length; _i++) {
     args[_i] = arguments[_i];
   }
   if (typeof console !== 'undefined') {
@@ -62,7 +62,7 @@ export function clone(source) {
   if (typeStr === '[object Array]') {
     if (!isPrimitive(source)) {
       result = [];
-      for (var i = 0, len = source.length; i < len; i++) {
+      for (let i = 0, len = source.length; i < len; i++) {
         result[i] = clone(source[i]);
       }
     }
@@ -73,14 +73,14 @@ export function clone(source) {
         result = Ctor.from(source);
       } else {
         result = new Ctor(source.length);
-        for (var i = 0, len = source.length; i < len; i++) {
+        for (let i = 0, len = source.length; i < len; i++) {
           result[i] = source[i];
         }
       }
     }
   } else if (!BUILTIN_OBJECT[typeStr] && !isPrimitive(source) && !isDom(source)) {
     result = {};
-    for (var key in source) {
+    for (let key in source) {
       if (source.hasOwnProperty(key) && key !== protoKey) {
         result[key] = clone(source[key]);
       }
@@ -93,7 +93,7 @@ export function merge(target, source, overwrite) {
   if (!isObject(source) || !isObject(target)) {
     return overwrite ? clone(source) : target;
   }
-  for (var key in source) {
+  for (let key in source) {
     if (source.hasOwnProperty(key) && key !== protoKey) {
       var targetProp = target[key];
       var sourceProp = source[key];
@@ -118,7 +118,7 @@ export function merge(target, source, overwrite) {
 
 export function mergeAll(targetAndSources, overwrite) {
   var result = targetAndSources[0];
-  for (var i = 1, len = targetAndSources.length; i < len; i++) {
+  for (let i = 1, len = targetAndSources.length; i < len; i++) {
     result = merge(result, targetAndSources[i], overwrite);
   }
   return result;
@@ -128,7 +128,7 @@ export function extend(target, source) {
   if (Object.assign) {
     Object.assign(target, source);
   } else {
-    for (var key in source) {
+    for (let key in source) {
       if (source.hasOwnProperty(key) && key !== protoKey) {
         target[key] = source[key];
       }
@@ -139,7 +139,7 @@ export function extend(target, source) {
 
 export function defaults(target, source, overlay) {
   var keysArr = keys(source);
-  for (var i = 0; i < keysArr.length; i++) {
+  for (let i = 0; i < keysArr.length; i++) {
     var key = keysArr[i];
     if ((overlay ? source[key] != null : target[key] == null)) {
       target[key] = source[key];
@@ -155,7 +155,7 @@ export function indexOf(array, value) {
     if (array.indexOf) {
       return array.indexOf(value);
     }
-    for (var i = 0, len = array.length; i < len; i++) {
+    for (let i = 0, len = array.length; i < len; i++) {
       if (array[i] === value) {
         return i;
       }
@@ -172,7 +172,7 @@ export function inherits(clazz, baseClazz) {
 
   F.prototype = baseClazz.prototype;
   clazz.prototype = new F();
-  for (var prop in clazzPrototype) {
+  for (let prop in clazzPrototype) {
     if (clazzPrototype.hasOwnProperty(prop)) {
       clazz.prototype[prop] = clazzPrototype[prop];
     }
@@ -186,7 +186,7 @@ export function mixin(target, source, override) {
   source = 'prototype' in source ? source.prototype : source;
   if (Object.getOwnPropertyNames) {
     var keyList = Object.getOwnPropertyNames(source);
-    for (var i = 0; i < keyList.length; i++) {
+    for (let i = 0; i < keyList.length; i++) {
       var key = keyList[i];
       if (key !== 'constructor') {
         if ((override ? source[key] != null : target[key] == null)) {
@@ -216,11 +216,11 @@ export function each(arr, cb, context) {
   if (arr.forEach && arr.forEach === nativeForEach) {
     arr.forEach(cb, context);
   } else if (arr.length === +arr.length) {
-    for (var i = 0, len = arr.length; i < len; i++) {
+    for (let i = 0, len = arr.length; i < len; i++) {
       cb.call(context, arr[i], i, arr);
     }
   } else {
-    for (var key in arr) {
+    for (let key in arr) {
       if (arr.hasOwnProperty(key)) {
         cb.call(context, arr[key], key, arr);
       }
@@ -239,7 +239,7 @@ export function map(arr, cb, context) {
     return arr.map(cb, context);
   }
   var result = [];
-  for (var i = 0, len = arr.length; i < len; i++) {
+  for (let i = 0, len = arr.length; i < len; i++) {
     result.push(cb.call(context, arr[i], i, arr));
   }
   return result;
@@ -249,7 +249,7 @@ export function reduce(arr, cb, memo, context) {
   if (!(arr && cb)) {
     return;
   }
-  for (var i = 0, len = arr.length; i < len; i++) {
+  for (let i = 0, len = arr.length; i < len; i++) {
     memo = cb.call(context, memo, arr[i], i, arr);
   }
   return memo;
@@ -266,7 +266,7 @@ export function filter(arr, cb, context) {
     return arr.filter(cb, context);
   }
   var result = [];
-  for (var i = 0, len = arr.length; i < len; i++) {
+  for (let i = 0, len = arr.length; i < len; i++) {
     if (cb.call(context, arr[i], i, arr)) {
       result.push(arr[i]);
     }
@@ -278,7 +278,7 @@ export function find(arr, cb, context) {
   if (!(arr && cb)) {
     return;
   }
-  for (var i = 0, len = arr.length; i < len; i++) {
+  for (let i = 0, len = arr.length; i < len; i++) {
     if (cb.call(context, arr[i], i, arr)) {
       return arr[i];
     }
@@ -293,7 +293,7 @@ export function keys(obj) {
     return Object.keys(obj);
   }
   var keyList = [];
-  for (var key in obj) {
+  for (let key in obj) {
     if (obj.hasOwnProperty(key)) {
       keyList.push(key);
     }
@@ -303,7 +303,7 @@ export function keys(obj) {
 
 function bindPolyfill(func, context) {
   var args = [];
-  for (var _i = 2; _i < arguments.length; _i++) {
+  for (let _i = 2; _i < arguments.length; _i++) {
     args[_i - 2] = arguments[_i];
   }
   return function () {
@@ -317,7 +317,7 @@ export const bind = (protoFunction && isFunction(protoFunction.bind))
 
 function curry(func) {
   var args = [];
-  for (var _i = 1; _i < arguments.length; _i++) {
+  for (let _i = 1; _i < arguments.length; _i++) {
     args[_i - 1] = arguments[_i];
   }
   return function () {
@@ -387,10 +387,10 @@ export function eqNaN(value) {
 
 export function retrieve() {
   var args = [];
-  for (var _i = 0; _i < arguments.length; _i++) {
+  for (let _i = 0; _i < arguments.length; _i++) {
     args[_i] = arguments[_i];
   }
-  for (var i = 0, len = args.length; i < len; i++) {
+  for (let i = 0, len = args.length; i < len; i++) {
     if (args[i] != null) {
       return args[i];
     }
@@ -413,7 +413,7 @@ export function retrieve3(value0, value1, value2) {
 
 export function slice(arr) {
   var args = [];
-  for (var _i = 1; _i < arguments.length; _i++) {
+  for (let _i = 1; _i < arguments.length; _i++) {
     args[_i - 1] = arguments[_i];
   }
   return nativeSlice.apply(arr, args);
@@ -484,7 +484,7 @@ const MapPolyfill = (function () {
   };
   MapPolyfill.prototype.forEach = function (callback) {
     var data = this.data;
-    for (var key in data) {
+    for (let key in data) {
       if (data.hasOwnProperty(key)) {
         callback(data[key], key);
       }
@@ -546,11 +546,11 @@ export function createHashMap(obj) {
 
 export function concatArray(a, b) {
   var newArray = new a.constructor(a.length + b.length);
-  for (var i = 0; i < a.length; i++) {
+  for (let i = 0; i < a.length; i++) {
     newArray[i] = a[i];
   }
   var offset = a.length;
-  for (var i = 0; i < b.length; i++) {
+  for (let i = 0; i < b.length; i++) {
     newArray[i + offset] = b[i];
   }
   return newArray;

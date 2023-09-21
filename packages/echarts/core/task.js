@@ -85,14 +85,14 @@ const Task = /** @class */ (function () {
     this._modDataCount = modDataCount;
     var step = performArgs && performArgs.step;
     if (upTask) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         assert(upTask._outputDueEnd != null);
       }
       this._dueEnd = upTask._outputDueEnd;
     }
     // DataTask or overallTask
     else {
-      if (__DEV__) {
+      if (self.__DEV__) {
         assert(!this._progress || this._count);
       }
       this._dueEnd = this._count ? this._count(this.context) : Infinity;
@@ -105,7 +105,7 @@ const Task = /** @class */ (function () {
       if (!skip && (forceFirstProgress || start < end)) {
         var progress = this._progress;
         if (isArray(progress)) {
-          for (var i = 0; i < progress.length; i++) {
+          for (let i = 0; i < progress.length; i++) {
             this._doProgress(progress[i], start, end, modBy, modDataCount);
           }
         } else {
@@ -117,7 +117,7 @@ const Task = /** @class */ (function () {
       // input data is the same, so use `dueIndex` as `outputDueEnd`.
       var outputDueEnd = this._settedOutputEnd != null
         ? this._settedOutputEnd : end;
-      if (__DEV__) {
+      if (self.__DEV__) {
         // ??? Can not rollback.
         assert(outputDueEnd >= this._outputDueEnd);
       }
@@ -172,7 +172,7 @@ const Task = /** @class */ (function () {
    * @return The downstream task.
    */
   Task.prototype.pipe = function (downTask) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       assert(downTask && !downTask._disposed && downTask !== this);
     }
     // If already downstream, do not dirty downTask.

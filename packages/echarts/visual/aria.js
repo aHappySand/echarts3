@@ -142,7 +142,7 @@ export default function ariaVisual(ecModel, api) {
       ariaLabel += replace(prefix, { seriesCount: seriesCnt });
       ecModel.eachSeries((seriesModel, idx) => {
         if (idx < displaySeriesCnt) {
-          var seriesLabel = void 0;
+          var seriesLabel;
           var seriesName = seriesModel.get('name');
           var withName = seriesName ? 'withName' : 'withoutName';
           seriesLabel = seriesCnt > 1
@@ -166,7 +166,7 @@ export default function ariaVisual(ecModel, api) {
           var middleSeparator_1 = labelModel.get(['data', 'separator', 'middle']);
           var endSeparator_1 = labelModel.get(['data', 'separator', 'end']);
           var dataLabels = [];
-          for (var i = 0; i < data.count(); i++) {
+          for (let i = 0; i < data.count(); i++) {
             if (i < maxDataCnt) {
               var name_1 = data.getName(i);
               var value = data.getValues(i);

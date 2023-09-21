@@ -35,8 +35,8 @@ export function concatInternalOptions(ecModel, mainType, newCmptOptionList) {
   if (!internalOptions) {
     return newCmptOptionList;
   }
-  if (__DEV__) {
-    for (var i = 0; i < internalOptions.length; i++) {
+  if (self.__DEV__) {
+    for (let i = 0; i < internalOptions.length; i++) {
       assert(isComponentIdInternal(internalOptions[i]));
     }
   }

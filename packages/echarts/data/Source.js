@@ -57,7 +57,7 @@ const SourceImpl = /** @class */ (function () {
     this.metaRawOption = fields.metaRawOption;
     var dimensionsDefine = this.dimensionsDefine = fields.dimensionsDefine;
     if (dimensionsDefine) {
-      for (var i = 0; i < dimensionsDefine.length; i++) {
+      for (let i = 0; i < dimensionsDefine.length; i++) {
         var dim = dimensionsDefine[i];
         if (dim.type == null) {
           if (guessOrdinal(this, i) === BE_ORDINAL.Must) {
@@ -135,7 +135,7 @@ export function detectSourceFormat(data) {
     if (data.length === 0) {
       sourceFormat = SOURCE_FORMAT_ARRAY_ROWS;
     }
-    for (var i = 0, len = data.length; i < len; i++) {
+    for (let i = 0, len = data.length; i < len; i++) {
       var item = data[i];
       if (item == null) {
         continue;
@@ -148,7 +148,7 @@ export function detectSourceFormat(data) {
       }
     }
   } else if (isObject(data)) {
-    for (var key in data) {
+    for (let key in data) {
       if (hasOwn(data, key) && isArrayLike(data[key])) {
         sourceFormat = SOURCE_FORMAT_KEYED_COLUMNS;
         break;
@@ -231,7 +231,7 @@ function determineSourceDimensions(data, sourceFormat, seriesLayoutBy, sourceHea
     var value0 = getDataItemValue(data[0]);
     dimensionsDetectedCount = isArray(value0) && value0.length || 1;
   } else if (sourceFormat === SOURCE_FORMAT_TYPED_ARRAY) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       assert(!!dimensionsDefine, 'dimensions must be given if data is TypedArray.');
     }
   }
@@ -297,12 +297,12 @@ function normalizeDimensionsOption(dimensionsDefine) {
 
 function arrayRowsTravelFirst(cb, seriesLayoutBy, data, maxLoop) {
   if (seriesLayoutBy === SERIES_LAYOUT_BY_ROW) {
-    for (var i = 0; i < data.length && i < maxLoop; i++) {
+    for (let i = 0; i < data.length && i < maxLoop; i++) {
       cb(data[i] ? data[i][0] : null, i);
     }
   } else {
     var value0 = data[0] || [];
-    for (var i = 0; i < value0.length && i < maxLoop; i++) {
+    for (let i = 0; i < value0.length && i < maxLoop; i++) {
       cb(value0[i], i);
     }
   }

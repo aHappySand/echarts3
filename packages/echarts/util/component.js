@@ -20,7 +20,7 @@ import * as zrUtil from '../../zrender/core/util';
 import { parseClassType } from './clazz';
 import { makePrintable } from './log';
 // A random offset
-const base = Math.round(Math.random() * 10);
+let base = Math.round(Math.random() * 10);
 
 /**
  * @public
@@ -93,7 +93,7 @@ export function enableTopologicalTravel(entity, dependencyGetter) {
     }
     zrUtil.each(targetNameSet, () => {
       var errMsg = '';
-      if (__DEV__) {
+      if (self.__DEV__) {
         errMsg = makePrintable('Circular dependency may exists: ', targetNameSet, targetNameList, fullNameList);
       }
       throw new Error(errMsg);

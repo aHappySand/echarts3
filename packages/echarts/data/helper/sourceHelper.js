@@ -116,7 +116,7 @@ export function makeSeriesEncodeForAxisCoordSys(coordDimensions, seriesModel, so
   });
 
   function pushDim(dimIdxArr, idxFrom, idxCount) {
-    for (var i = 0; i < idxCount; i++) {
+    for (let i = 0; i < idxCount; i++) {
       dimIdxArr.push(idxFrom + i);
     }
   }
@@ -158,7 +158,7 @@ export function makeSeriesEncodeForNameBased(seriesModel, source, dimCount) {
     var idxRes1 = {};
     var guessRecords = [];
     // 5 is an experience value.
-    for (var i = 0, len = Math.min(5, dimCount); i < len; i++) {
+    for (let i = 0, len = Math.min(5, dimCount); i < len; i++) {
       var guessResult = doGuessOrdinal(source.data, sourceFormat, source.seriesLayoutBy, dimensionsDefine, source.startIndex, i);
       guessRecords.push(guessResult);
       var isPureNumber = guessResult === BE_ORDINAL.Not;
@@ -282,13 +282,13 @@ function doGuessOrdinal(data, sourceFormat, seriesLayoutBy, dimensionsDefine, st
     var dataArrayRows = data;
     if (seriesLayoutBy === SERIES_LAYOUT_BY_ROW) {
       var sample = dataArrayRows[dimIndex];
-      for (var i = 0; i < (sample || []).length && i < maxLoop; i++) {
+      for (let i = 0; i < (sample || []).length && i < maxLoop; i++) {
         if ((result = detectValue(sample[startIndex + i])) != null) {
           return result;
         }
       }
     } else {
-      for (var i = 0; i < dataArrayRows.length && i < maxLoop; i++) {
+      for (let i = 0; i < dataArrayRows.length && i < maxLoop; i++) {
         var row = dataArrayRows[startIndex + i];
         if (row && (result = detectValue(row[dimIndex])) != null) {
           return result;
@@ -300,7 +300,7 @@ function doGuessOrdinal(data, sourceFormat, seriesLayoutBy, dimensionsDefine, st
     if (!dimName) {
       return BE_ORDINAL.Not;
     }
-    for (var i = 0; i < dataObjectRows.length && i < maxLoop; i++) {
+    for (let i = 0; i < dataObjectRows.length && i < maxLoop; i++) {
       var item = dataObjectRows[i];
       if (item && (result = detectValue(item[dimName])) != null) {
         return result;
@@ -315,14 +315,14 @@ function doGuessOrdinal(data, sourceFormat, seriesLayoutBy, dimensionsDefine, st
     if (!sample || isTypedArray(sample)) {
       return BE_ORDINAL.Not;
     }
-    for (var i = 0; i < sample.length && i < maxLoop; i++) {
+    for (let i = 0; i < sample.length && i < maxLoop; i++) {
       if ((result = detectValue(sample[i])) != null) {
         return result;
       }
     }
   } else if (sourceFormat === SOURCE_FORMAT_ORIGINAL) {
     var dataOriginal = data;
-    for (var i = 0; i < dataOriginal.length && i < maxLoop; i++) {
+    for (let i = 0; i < dataOriginal.length && i < maxLoop; i++) {
       var item = dataOriginal[i];
       var val = getDataItemValue(item);
       if (!isArray(val)) {

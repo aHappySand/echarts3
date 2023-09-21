@@ -24,7 +24,7 @@ const implsStore = {};
 
 // TODO Type
 export function registerImpl(name, impl) {
-  if (__DEV__) {
+  if (self.__DEV__) {
     if (implsStore[name]) {
       error(`Already has an implementation of ${name}.`);
     }
@@ -33,7 +33,7 @@ export function registerImpl(name, impl) {
 }
 
 export function getImpl(name) {
-  if (__DEV__) {
+  if (self.__DEV__) {
     if (!implsStore[name]) {
       error(`Implementation of ${name} doesn't exists.`);
     }

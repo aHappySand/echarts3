@@ -39,7 +39,7 @@ function Path() {
 }
 
 // Reserve 0 as default.
-const _highlightNextDigit = 1;
+let _highlightNextDigit = 1;
 const _highlightKeyMap = {};
 const getSavedStates = makeInner();
 const getComponentStates = makeInner();
@@ -167,12 +167,12 @@ export function clearStates(el) {
 function getFromStateStyle(el, props, toStateName, defaultValue) {
   var style = el.style;
   var fromState = {};
-  for (var i = 0; i < props.length; i++) {
+  for (let i = 0; i < props.length; i++) {
     var propName = props[i];
     var val = style[propName];
     fromState[propName] = val == null ? (defaultValue && defaultValue[propName]) : val;
   }
-  for (var i = 0; i < el.animators.length; i++) {
+  for (let i = 0; i < el.animators.length; i++) {
     var animator = el.animators[i];
     if (animator.__fromStateTransition &&
       // Don't consider the animation to emphasis state.
@@ -375,7 +375,7 @@ export function blurSeries(targetSeriesIndex, focus, blurScope, api) {
   blurScope = blurScope || 'coordinateSystem';
 
   function leaveBlurOfIndices(data, dataIndices) {
-    for (var i = 0; i < dataIndices.length; i++) {
+    for (let i = 0; i < dataIndices.length; i++) {
       var itemEl = data.getItemGraphicEl(dataIndices[i]);
       itemEl && leaveBlur(itemEl);
     }
@@ -426,7 +426,7 @@ export function blurSeries(targetSeriesIndex, focus, blurScope, api) {
         leaveBlurOfIndices(seriesModel.getData(), focus);
       } else if (isObject(focus)) {
         var dataTypes = keys(focus);
-        for (var d = 0; d < dataTypes.length; d++) {
+        for (let d = 0; d < dataTypes.length; d++) {
           leaveBlurOfIndices(seriesModel.getData(dataTypes[d]), focus[dataTypes[d]]);
         }
       }
@@ -467,7 +467,7 @@ export function blurSeriesFromHighlightPayload(seriesModel, payload, api) {
   var seriesIndex = seriesModel.seriesIndex;
   var data = seriesModel.getData(payload.dataType);
   if (!data) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       error(`Unknown dataType ${payload.dataType}`);
     }
     return;
@@ -521,8 +521,8 @@ export function findComponentHighDownDispatchers(componentMainType, componentInd
   // At presnet, the component (like Geo) only blur inside itself.
   // So we do not use `blurScope` in component.
   var focusSelf;
-  for (var i = 0; i < dispatchers.length; i++) {
-    if (__DEV__ && !isHighDownDispatcher(dispatchers[i])) {
+  for (let i = 0; i < dispatchers.length; i++) {
+    if (self.__DEV__ && !isHighDownDispatcher(dispatchers[i])) {
       error('param should be highDownDispatcher');
     }
     if (getECData(dispatchers[i]).focus === 'self') {
@@ -534,7 +534,7 @@ export function findComponentHighDownDispatchers(componentMainType, componentInd
 }
 
 export function handleGlobalMouseOverForHighDown(dispatcher, e, api) {
-  if (__DEV__ && !isHighDownDispatcher(dispatcher)) {
+  if (self.__DEV__ && !isHighDownDispatcher(dispatcher)) {
     error('param should be highDownDispatcher');
   }
   var ecData = getECData(dispatcher);
@@ -563,7 +563,7 @@ export function handleGlobalMouseOverForHighDown(dispatcher, e, api) {
 }
 
 export function handleGlobalMouseOutForHighDown(dispatcher, e, api) {
-  if (__DEV__ && !isHighDownDispatcher(dispatcher)) {
+  if (self.__DEV__ && !isHighDownDispatcher(dispatcher)) {
     error('param should be highDownDispatcher');
   }
   allLeaveBlur(api);
@@ -606,8 +606,7 @@ export function getAllSelectedIndices(ecModel) {
   ecModel.eachSeries((seriesModel) => {
     var allData = seriesModel.getAllData();
     each(allData, (_a) => {
-      var data = _a.data; var
-        type = _a.type;
+      var type = _a.type;
       var dataIndices = seriesModel.getSelectedDataIndices();
       if (dataIndices.length > 0) {
         var item = {
@@ -651,7 +650,7 @@ export function enableHoverFocus(el, focus, blurScope) {
   if (focus != null) {
     // TODO dataIndex may be set after this function. This check is not useful.
     // if (ecData.dataIndex == null) {
-    //     if (__DEV__) {
+    //     if (self.__DEV__) {
     //         console.warn('focus can only been set on element with dataIndex');
     //     }
     // }
@@ -677,7 +676,7 @@ const defaultStyleGetterMap = {
 export function setStatesStylesFromModel(el, itemModel, styleType, // default itemStyle
   getter) {
   styleType = styleType || 'itemStyle';
-  for (var i = 0; i < OTHER_STATES.length; i++) {
+  for (let i = 0; i < OTHER_STATES.length; i++) {
     var stateName = OTHER_STATES[i];
     var model = itemModel.getModel([stateName, styleType]);
     var state = el.ensureState(stateName);

@@ -62,7 +62,7 @@
       var totalColors = options.count,
         colors = [];
       // Value false at index i means the range i is not taken yet.
-      for (var i = 0; i < options.count; i++) {
+      for (let i = 0; i < options.count; i++) {
         colorRanges.push(false);
       }
       options.count = null;
@@ -228,7 +228,7 @@
   function getMinimumBrightness(H, S) {
     var lowerBounds = getColorInfo(H).lowerBounds;
 
-    for (var i = 0; i < lowerBounds.length - 1; i++) {
+    for (let i = 0; i < lowerBounds.length - 1; i++) {
       var s1 = lowerBounds[i][0],
         v1 = lowerBounds[i][1];
 
@@ -280,7 +280,7 @@
       hue -= 360;
     }
 
-    for (var colorName in colorDictionary) {
+    for (let colorName in colorDictionary) {
       var color = colorDictionary[colorName];
       if (color.hueRange && hue >= color.hueRange[0] && hue <= color.hueRange[1]) {
         return colorDictionary[colorName];
@@ -542,7 +542,7 @@
 
   function stringToInteger(string) {
     var total = 0;
-    for (var i = 0; i !== string.length; i++) {
+    for (let i = 0; i !== string.length; i++) {
       if (total >= Number.MAX_SAFE_INTEGER) break;
       total += string.charCodeAt(i);
     }

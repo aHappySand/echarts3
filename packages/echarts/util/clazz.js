@@ -61,7 +61,7 @@ export function isExtendedClass(clz) {
 export function enableClassExtend(rootClz, mandatoryMethods) {
   rootClz.$constructor = rootClz; // FIXME: not necessary?
   rootClz.extend = function (proto) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       zrUtil.each(mandatoryMethods, (method) => {
         if (!proto[method]) {
           console.warn(`Method \`${method}\` should be implemented${
@@ -89,8 +89,8 @@ export function enableClassExtend(rootClz, mandatoryMethods) {
       // constructor.
       // If this constructor/$constructor is declared, it is responsible for
       // calling the super constructor.
-      ExtendedClass = function () {
-        (proto.$constructor || superClass).apply(this, arguments);
+      ExtendedClass = function (...args) {
+        (proto.$constructor || superClass).apply(this, args);
       };
       zrUtil.inherits(ExtendedClass, this);
     }
@@ -128,7 +128,7 @@ export function mountExtend(SubClz, SupperClz) {
 }
 
 // A random offset.
-const classBase = Math.round(Math.random() * 10);
+let classBase = Math.round(Math.random() * 10);
 
 /**
  * Implements `CheckableConstructor` for `target`.
@@ -146,7 +146,7 @@ const classBase = Math.round(Math.random() * 10);
 export function enableClassCheck(target) {
   var classAttr = ['__\0is_clz', classBase++].join('_');
   target.prototype[classAttr] = true;
-  if (__DEV__) {
+  if (self.__DEV__) {
     zrUtil.assert(!target.isInstance, 'The method "is" can not be defined.');
   }
   target.isInstance = function (obj) {
@@ -162,7 +162,7 @@ export function enableClassCheck(target) {
 // then when method of class C is called, dead loop occurred.
 function superCall(context, methodName) {
   var args = [];
-  for (var _i = 2; _i < arguments.length; _i++) {
+  for (let _i = 2; _i < arguments.length; _i++) {
     args[_i - 2] = arguments[_i];
   }
   return this.superClass.prototype[methodName].apply(context, args);
@@ -204,7 +204,7 @@ export function enableClassManagement(target) {
       clz.prototype.type = componentFullType;
       var componentTypeInfo = parseClassType(componentFullType);
       if (!componentTypeInfo.sub) {
-        if (__DEV__) {
+        if (self.__DEV__) {
           if (storage[componentTypeInfo.main]) {
             console.warn(`${componentTypeInfo.main} exists.`);
           }

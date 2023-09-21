@@ -32,12 +32,12 @@ function compatEC2ItemStyle(opt) {
   if (!itemStyleOpt) {
     return;
   }
-  for (var i = 0, len = POSSIBLE_STYLES.length; i < len; i++) {
+  for (let i = 0, len = POSSIBLE_STYLES.length; i < len; i++) {
     var styleName = POSSIBLE_STYLES[i];
     var normalItemStyleOpt = itemStyleOpt.normal;
     var emphasisItemStyleOpt = itemStyleOpt.emphasis;
     if (normalItemStyleOpt && normalItemStyleOpt[styleName]) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         deprecateReplaceLog(`itemStyle.normal.${styleName}`, styleName);
       }
       opt[styleName] = opt[styleName] || {};
@@ -49,7 +49,7 @@ function compatEC2ItemStyle(opt) {
       normalItemStyleOpt[styleName] = null;
     }
     if (emphasisItemStyleOpt && emphasisItemStyleOpt[styleName]) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         deprecateReplaceLog(`itemStyle.emphasis.${styleName}`, `emphasis.${styleName}`);
       }
       opt[styleName] = opt[styleName] || {};
@@ -68,7 +68,7 @@ function convertNormalEmphasis(opt, optType, useExtend) {
     var normalOpt = opt[optType].normal;
     var emphasisOpt = opt[optType].emphasis;
     if (normalOpt) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         // eslint-disable-next-line max-len
         deprecateLog(`'normal' hierarchy in ${optType} has been removed since 4.0. All style properties are configured in ${optType} directly now.`);
       }
@@ -81,7 +81,7 @@ function convertNormalEmphasis(opt, optType, useExtend) {
       }
     }
     if (emphasisOpt) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         deprecateLog(`${optType}.emphasis has been changed to emphasis.${optType} since 4.0`);
       }
       opt.emphasis = opt.emphasis || {};
@@ -115,11 +115,11 @@ function compatTextStyle(opt, propName) {
   var labelOptSingle = isObject(opt) && opt[propName];
   var textStyle = isObject(labelOptSingle) && labelOptSingle.textStyle;
   if (textStyle) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       // eslint-disable-next-line max-len
       deprecateLog(`textStyle hierarchy in ${propName} has been removed since 4.0. All textStyle properties are configured in ${propName} directly now.`);
     }
-    for (var i = 0, len = modelUtil.TEXT_STYLE_OPTIONS.length; i < len; i++) {
+    for (let i = 0, len = modelUtil.TEXT_STYLE_OPTIONS.length; i < len; i++) {
       var textPropName = modelUtil.TEXT_STYLE_OPTIONS[i];
       if (textStyle.hasOwnProperty(textPropName)) {
         labelOptSingle[textPropName] = textStyle[textPropName];
@@ -175,7 +175,7 @@ function processSeries(seriesOpt) {
     data = data || seriesOpt.nodes;
     var edgeData = seriesOpt.links || seriesOpt.edges;
     if (edgeData && !zrUtil.isTypedArray(edgeData)) {
-      for (var i = 0; i < edgeData.length; i++) {
+      for (let i = 0; i < edgeData.length; i++) {
         compatEC3CommonStyles(edgeData[i]);
       }
     }
@@ -184,7 +184,7 @@ function processSeries(seriesOpt) {
     });
   }
   if (data && !zrUtil.isTypedArray(data)) {
-    for (var i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       compatEC3CommonStyles(data[i]);
     }
   }
@@ -192,7 +192,7 @@ function processSeries(seriesOpt) {
   markPoint = seriesOpt.markPoint;
   if (markPoint && markPoint.data) {
     var mpData = markPoint.data;
-    for (var i = 0; i < mpData.length; i++) {
+    for (let i = 0; i < mpData.length; i++) {
       compatEC3CommonStyles(mpData[i]);
     }
   }
@@ -200,7 +200,7 @@ function processSeries(seriesOpt) {
   markLine = seriesOpt.markLine;
   if (markLine && markLine.data) {
     var mlData = markLine.data;
-    for (var i = 0; i < mlData.length; i++) {
+    for (let i = 0; i < mlData.length; i++) {
       if (zrUtil.isArray(mlData[i])) {
         compatEC3CommonStyles(mlData[i][0]);
         compatEC3CommonStyles(mlData[i][1]);
@@ -265,18 +265,18 @@ export default function globalCompatStyle(option, isTheme) {
     if (radarOpt.name && radarOpt.axisName == null) {
       radarOpt.axisName = radarOpt.name;
       delete radarOpt.name;
-      if (__DEV__) {
+      if (self.__DEV__) {
         deprecateLog('name property in radar component has been changed to axisName');
       }
     }
     if (radarOpt.nameGap != null && radarOpt.axisNameGap == null) {
       radarOpt.axisNameGap = radarOpt.nameGap;
       delete radarOpt.nameGap;
-      if (__DEV__) {
+      if (self.__DEV__) {
         deprecateLog('nameGap property in radar component has been changed to axisNameGap');
       }
     }
-    if (__DEV__) {
+    if (self.__DEV__) {
       each(radarOpt.indicator, (indicatorOpt) => {
         if (indicatorOpt.text) {
           deprecateReplaceLog('text', 'name', 'radar.indicator');

@@ -35,7 +35,7 @@ function select(arr, left, right, nth, compareFunc) {
     // Swap pivot to the end
     swapElement(arr, pivotIdx, right);
     pivotIdx = left;
-    for (var i = left; i <= right - 1; i++) {
+    for (let i = left; i <= right - 1; i++) {
       if (compareFunc(pivotValue, arr[i]) >= 0) {
         swapElement(arr, i, pivotIdx);
         pivotIdx++;

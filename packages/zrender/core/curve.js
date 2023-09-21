@@ -158,7 +158,7 @@ export function cubicProjectPoint(x0, y0, x1, y1, x2, y2, x3, y3, x, y, out) {
   var d2;
   _v0[0] = x;
   _v0[1] = y;
-  for (var _t = 0; _t < 1; _t += 0.05) {
+  for (let _t = 0; _t < 1; _t += 0.05) {
     _v1[0] = cubicAt(x0, x1, x2, x3, _t);
     _v1[1] = cubicAt(y0, y1, y2, y3, _t);
     d1 = v2DistSquare(_v0, _v1);
@@ -168,7 +168,7 @@ export function cubicProjectPoint(x0, y0, x1, y1, x2, y2, x3, y3, x, y, out) {
     }
   }
   d = Infinity;
-  for (var i = 0; i < 32; i++) {
+  for (let i = 0; i < 32; i++) {
     if (interval < EPSILON_NUMERIC) {
       break;
     }
@@ -204,7 +204,7 @@ export function cubicLength(x0, y0, x1, y1, x2, y2, x3, y3, iteration) {
   var py = y0;
   var d = 0;
   var step = 1 / iteration;
-  for (var i = 1; i <= iteration; i++) {
+  for (let i = 1; i <= iteration; i++) {
     var t = i * step;
     var x = cubicAt(x0, x1, x2, x3, t);
     var y = cubicAt(y0, y1, y2, y3, t);
@@ -286,7 +286,7 @@ export function quadraticProjectPoint(x0, y0, x1, y1, x2, y2, x, y, out) {
   var d = Infinity;
   _v0[0] = x;
   _v0[1] = y;
-  for (var _t = 0; _t < 1; _t += 0.05) {
+  for (let _t = 0; _t < 1; _t += 0.05) {
     _v1[0] = quadraticAt(x0, x1, x2, _t);
     _v1[1] = quadraticAt(y0, y1, y2, _t);
     var d1 = v2DistSquare(_v0, _v1);
@@ -296,7 +296,7 @@ export function quadraticProjectPoint(x0, y0, x1, y1, x2, y2, x, y, out) {
     }
   }
   d = Infinity;
-  for (var i = 0; i < 32; i++) {
+  for (let i = 0; i < 32; i++) {
     if (interval < EPSILON_NUMERIC) {
       break;
     }
@@ -332,7 +332,7 @@ export function quadraticLength(x0, y0, x1, y1, x2, y2, iteration) {
   var py = y0;
   var d = 0;
   var step = 1 / iteration;
-  for (var i = 1; i <= iteration; i++) {
+  for (let i = 1; i <= iteration; i++) {
     var t = i * step;
     var x = quadraticAt(x0, x1, x2, t);
     var y = quadraticAt(y0, y1, y2, t);

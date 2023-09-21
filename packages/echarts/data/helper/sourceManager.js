@@ -169,9 +169,9 @@ const SourceManager = /** @class */ (function () {
     var upstreamSignList;
     if (isSeries(sourceHost)) {
       var seriesModel = sourceHost;
-      var data = void 0;
-      var sourceFormat = void 0;
-      var upSource = void 0;
+      var data;
+      var sourceFormat;
+      var upSource;
       // Has upstream dataset
       if (hasUpstream) {
         var upSourceMgr = upSourceMgrList[0];
@@ -222,7 +222,7 @@ const SourceManager = /** @class */ (function () {
         upstreamSignList = [];
       }
     }
-    if (__DEV__) {
+    if (self.__DEV__) {
       assert(resultSourceList && upstreamSignList);
     }
     this._setLocalSource(resultSourceList, upstreamSignList);
@@ -231,13 +231,13 @@ const SourceManager = /** @class */ (function () {
     var datasetModel = this._sourceHost;
     var transformOption = datasetModel.get('transform', true);
     var fromTransformResult = datasetModel.get('fromTransformResult', true);
-    if (__DEV__) {
+    if (self.__DEV__) {
       assert(fromTransformResult != null || transformOption != null);
     }
     if (fromTransformResult != null) {
       var errMsg = '';
       if (upMgrList.length !== 1) {
-        if (__DEV__) {
+        if (self.__DEV__) {
           errMsg = 'When using `fromTransformResult`, there should be only one upstream dataset';
         }
         doThrow(errMsg);
@@ -251,7 +251,7 @@ const SourceManager = /** @class */ (function () {
       var upSource = upMgr.getSource(fromTransformResult || 0);
       var errMsg = '';
       if (fromTransformResult != null && !upSource) {
-        if (__DEV__) {
+        if (self.__DEV__) {
           errMsg = `Can not retrieve result by \`fromTransformResult\`: ${fromTransformResult}`;
         }
         doThrow(errMsg);
@@ -272,7 +272,7 @@ const SourceManager = /** @class */ (function () {
     }
     // All sourceList is from the some upstream.
     var upSourceMgrList = this._getUpstreamSourceManagers();
-    for (var i = 0; i < upSourceMgrList.length; i++) {
+    for (let i = 0; i < upSourceMgrList.length; i++) {
       var upSrcMgr = upSourceMgrList[i];
       if (
         // Consider the case that there is ancestor diry, call it recursively.
@@ -307,7 +307,7 @@ const SourceManager = /** @class */ (function () {
    *        Should have been sorted by `storeDimIndex` asc.
    */
   SourceManager.prototype.getSharedDataStore = function (seriesDimRequest) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       assert(isSeries(this._sourceHost), 'Can only call getDataStore on series source manager.');
     }
     var schema = seriesDimRequest.makeStoreSchema();

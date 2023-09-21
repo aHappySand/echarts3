@@ -24,7 +24,7 @@ import { deprecateLog, deprecateReplaceLog } from '../util/log';
 function get(opt, path) {
   var pathArr = path.split(',');
   var obj = opt;
-  for (var i = 0; i < pathArr.length; i++) {
+  for (let i = 0; i < pathArr.length; i++) {
     obj = obj && obj[pathArr[i]];
     if (obj == null) {
       break;
@@ -73,12 +73,12 @@ const BAR_ITEM_STYLE_MAP = [
 function compatBarItemStyle(option) {
   var itemStyle = option && option.itemStyle;
   if (itemStyle) {
-    for (var i = 0; i < BAR_ITEM_STYLE_MAP.length; i++) {
+    for (let i = 0; i < BAR_ITEM_STYLE_MAP.length; i++) {
       var oldName = BAR_ITEM_STYLE_MAP[i][1];
       var newName = BAR_ITEM_STYLE_MAP[i][0];
       if (itemStyle[oldName] != null) {
         itemStyle[newName] = itemStyle[oldName];
-        if (__DEV__) {
+        if (self.__DEV__) {
           deprecateReplaceLog(oldName, newName);
         }
       }
@@ -91,7 +91,7 @@ function compatPieLabel(option) {
     return;
   }
   if (option.alignTo === 'edge' && option.margin != null && option.edgeDistance == null) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       deprecateReplaceLog('label.margin', 'label.edgeDistance', 'pie');
     }
     option.edgeDistance = option.margin;
@@ -104,7 +104,7 @@ function compatSunburstState(option) {
   }
   if (option.downplay && !option.blur) {
     option.blur = option.downplay;
-    if (__DEV__) {
+    if (self.__DEV__) {
       deprecateReplaceLog('downplay', 'blur', 'sunburst');
     }
   }
@@ -117,7 +117,7 @@ function compatGraphFocus(option) {
   if (option.focusNodeAdjacency != null) {
     option.emphasis = option.emphasis || {};
     if (option.emphasis.focus == null) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         deprecateReplaceLog('focusNodeAdjacency', 'emphasis: { focus: \'adjacency\'}', 'graph/sankey');
       }
       option.emphasis.focus = 'adjacency';
@@ -127,7 +127,7 @@ function compatGraphFocus(option) {
 
 function traverseTree(data, cb) {
   if (data) {
-    for (var i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       cb(data[i]);
       data[i] && traverseTree(data[i].children, cb);
     }
@@ -146,28 +146,28 @@ export default function globalBackwardCompat(option, isTheme) {
     if (seriesType === 'line') {
       if (seriesOpt.clipOverflow != null) {
         seriesOpt.clip = seriesOpt.clipOverflow;
-        if (__DEV__) {
+        if (self.__DEV__) {
           deprecateReplaceLog('clipOverflow', 'clip', 'line');
         }
       }
     } else if (seriesType === 'pie' || seriesType === 'gauge') {
       if (seriesOpt.clockWise != null) {
         seriesOpt.clockwise = seriesOpt.clockWise;
-        if (__DEV__) {
+        if (self.__DEV__) {
           deprecateReplaceLog('clockWise', 'clockwise');
         }
       }
       compatPieLabel(seriesOpt.label);
       var data = seriesOpt.data;
       if (data && !isTypedArray(data)) {
-        for (var i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
           compatPieLabel(data[i]);
         }
       }
       if (seriesOpt.hoverOffset != null) {
         seriesOpt.emphasis = seriesOpt.emphasis || {};
         if (seriesOpt.emphasis.scaleSize = null) {
-          if (__DEV__) {
+          if (self.__DEV__) {
             deprecateReplaceLog('hoverOffset', 'emphasis.scaleSize');
           }
           seriesOpt.emphasis.scaleSize = seriesOpt.hoverOffset;
@@ -183,7 +183,7 @@ export default function globalBackwardCompat(option, isTheme) {
       compatBarItemStyle(seriesOpt.emphasis);
       var data = seriesOpt.data;
       if (data && !isTypedArray(data)) {
-        for (var i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
           if (typeof data[i] === 'object') {
             compatBarItemStyle(data[i]);
             compatBarItemStyle(data[i] && data[i].emphasis);
@@ -196,7 +196,7 @@ export default function globalBackwardCompat(option, isTheme) {
         seriesOpt.emphasis = seriesOpt.emphasis || {};
         if (!seriesOpt.emphasis.focus) {
           seriesOpt.emphasis.focus = highlightPolicy;
-          if (__DEV__) {
+          if (self.__DEV__) {
             deprecateReplaceLog('highlightPolicy', 'emphasis.focus', 'sunburst');
           }
         }
@@ -208,13 +208,13 @@ export default function globalBackwardCompat(option, isTheme) {
       // TODO nodes, edges?
     } else if (seriesType === 'map') {
       if (seriesOpt.mapType && !seriesOpt.map) {
-        if (__DEV__) {
+        if (self.__DEV__) {
           deprecateReplaceLog('mapType', 'map', 'map');
         }
         seriesOpt.map = seriesOpt.mapType;
       }
       if (seriesOpt.mapLocation) {
-        if (__DEV__) {
+        if (self.__DEV__) {
           deprecateLog('`mapLocation` is not used anymore.');
         }
         defaults(seriesOpt, seriesOpt.mapLocation);
@@ -223,7 +223,7 @@ export default function globalBackwardCompat(option, isTheme) {
     if (seriesOpt.hoverAnimation != null) {
       seriesOpt.emphasis = seriesOpt.emphasis || {};
       if (seriesOpt.emphasis && seriesOpt.emphasis.scale == null) {
-        if (__DEV__) {
+        if (self.__DEV__) {
           deprecateReplaceLog('hoverAnimation', 'emphasis.scale');
         }
         seriesOpt.emphasis.scale = seriesOpt.hoverAnimation;

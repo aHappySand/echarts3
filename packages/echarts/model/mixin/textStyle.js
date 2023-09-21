@@ -61,7 +61,7 @@ const TextStyleMixin = /** @class */ (function () {
       verticalAlign: this.getShallow('verticalAlign') ||
         this.getShallow('baseline')
     };
-    for (var i = 0; i < textStyleParams.length; i++) {
+    for (let i = 0; i < textStyleParams.length; i++) {
       style[textStyleParams[i]] = this.getShallow(textStyleParams[i]);
     }
     tmpText.useStyle(style);

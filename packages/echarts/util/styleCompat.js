@@ -202,7 +202,7 @@ function convertToEC4RichItem(out, richItem) {
 }
 
 export function warnDeprecated(deprecated, insteadApproach) {
-  if (__DEV__) {
+  if (self.__DEV__) {
     var key = `${deprecated}^_^${insteadApproach}`;
     if (!deprecatedLogs[key]) {
       console.warn(`[ECharts] DEPRECATED: "${deprecated}" has been deprecated. ${insteadApproach}`);

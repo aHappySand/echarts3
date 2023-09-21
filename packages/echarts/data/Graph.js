@@ -51,7 +51,7 @@ const Graph = /** @class */ (function () {
     id = id == null ? (`${dataIndex}`) : (`${id}`);
     var nodesMap = this._nodesMap;
     if (nodesMap[generateNodeKey(id)]) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         console.error('Graph nodes have duplicate name or id');
       }
       return;
@@ -148,7 +148,7 @@ const Graph = /** @class */ (function () {
   Graph.prototype.eachNode = function (cb, context) {
     var nodes = this.nodes;
     var len = nodes.length;
-    for (var i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
       if (nodes[i].dataIndex >= 0) {
         cb.call(context, nodes[i], i);
       }
@@ -161,7 +161,7 @@ const Graph = /** @class */ (function () {
   Graph.prototype.eachEdge = function (cb, context) {
     var edges = this.edges;
     var len = edges.length;
-    for (var i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
       if (edges[i].dataIndex >= 0 &&
         edges[i].node1.dataIndex >= 0 &&
         edges[i].node2.dataIndex >= 0) {
@@ -183,7 +183,7 @@ const Graph = /** @class */ (function () {
     }
     var edgeType = direction === 'out'
       ? 'outEdges' : (direction === 'in' ? 'inEdges' : 'edges');
-    for (var i = 0; i < this.nodes.length; i++) {
+    for (let i = 0; i < this.nodes.length; i++) {
       this.nodes[i].__visited = false;
     }
     if (cb.call(context, startNode, null)) {
@@ -193,7 +193,7 @@ const Graph = /** @class */ (function () {
     while (queue.length) {
       var currentNode = queue.shift();
       var edges = currentNode[edgeType];
-      for (var i = 0; i < edges.length; i++) {
+      for (let i = 0; i < edges.length; i++) {
         var e = edges[i];
         var otherNode = e.node1 === currentNode
           ? e.node2 : e.node1;
@@ -220,10 +220,10 @@ const Graph = /** @class */ (function () {
     var edgeData = this.edgeData;
     var nodes = this.nodes;
     var edges = this.edges;
-    for (var i = 0, len = nodes.length; i < len; i++) {
+    for (let i = 0, len = nodes.length; i < len; i++) {
       nodes[i].dataIndex = -1;
     }
-    for (var i = 0, len = data.count(); i < len; i++) {
+    for (let i = 0, len = data.count(); i < len; i++) {
       nodes[data.getRawIndex(i)].dataIndex = i;
     }
     edgeData.filterSelf((idx) => {
@@ -231,10 +231,10 @@ const Graph = /** @class */ (function () {
       return edge.node1.dataIndex >= 0 && edge.node2.dataIndex >= 0;
     });
     // Update edge
-    for (var i = 0, len = edges.length; i < len; i++) {
+    for (let i = 0, len = edges.length; i < len; i++) {
       edges[i].dataIndex = -1;
     }
-    for (var i = 0, len = edgeData.count(); i < len; i++) {
+    for (let i = 0, len = edgeData.count(); i < len; i++) {
       edges[edgeData.getRawIndex(i)].dataIndex = i;
     }
   };
@@ -246,10 +246,10 @@ const Graph = /** @class */ (function () {
     var graph = new Graph(this._directed);
     var nodes = this.nodes;
     var edges = this.edges;
-    for (var i = 0; i < nodes.length; i++) {
+    for (let i = 0; i < nodes.length; i++) {
       graph.addNode(nodes[i].id, nodes[i].dataIndex);
     }
-    for (var i = 0; i < edges.length; i++) {
+    for (let i = 0; i < edges.length; i++) {
       var e = edges[i];
       graph.addEdge(e.node1.id, e.node2.id, e.dataIndex);
     }
@@ -299,7 +299,7 @@ const GraphNode = /** @class */ (function () {
       edge: [],
       node: []
     };
-    for (var i = 0; i < this.edges.length; i++) {
+    for (let i = 0; i < this.edges.length; i++) {
       var adjacentEdge = this.edges[i];
       if (adjacentEdge.dataIndex < 0) {
         continue;
@@ -312,7 +312,7 @@ const GraphNode = /** @class */ (function () {
   GraphNode.prototype.getTrajectoryDataIndices = function () {
     var connectedEdgesMap = zrUtil.createHashMap();
     var connectedNodesMap = zrUtil.createHashMap();
-    for (var i = 0; i < this.edges.length; i++) {
+    for (let i = 0; i < this.edges.length; i++) {
       var adjacentEdge = this.edges[i];
       if (adjacentEdge.dataIndex < 0) {
         continue;
@@ -325,7 +325,7 @@ const GraphNode = /** @class */ (function () {
         var sourceNode = sourceNodesQueue[nodeIteratorIndex];
         nodeIteratorIndex++;
         connectedNodesMap.set(sourceNode.dataIndex, true);
-        for (var j = 0; j < sourceNode.inEdges.length; j++) {
+        for (let j = 0; j < sourceNode.inEdges.length; j++) {
           connectedEdgesMap.set(sourceNode.inEdges[j].dataIndex, true);
           sourceNodesQueue.push(sourceNode.inEdges[j].node1);
         }
@@ -335,7 +335,7 @@ const GraphNode = /** @class */ (function () {
         var targetNode = targetNodesQueue[nodeIteratorIndex];
         nodeIteratorIndex++;
         connectedNodesMap.set(targetNode.dataIndex, true);
-        for (var j = 0; j < targetNode.outEdges.length; j++) {
+        for (let j = 0; j < targetNode.outEdges.length; j++) {
           connectedEdgesMap.set(targetNode.outEdges[j].dataIndex, true);
           targetNodesQueue.push(targetNode.outEdges[j].node2);
         }
@@ -382,7 +382,7 @@ const GraphEdge = /** @class */ (function () {
       var sourceNode = sourceNodes[nodeIteratorIndex];
       nodeIteratorIndex++;
       connectedNodesMap.set(sourceNode.dataIndex, true);
-      for (var j = 0; j < sourceNode.inEdges.length; j++) {
+      for (let j = 0; j < sourceNode.inEdges.length; j++) {
         connectedEdgesMap.set(sourceNode.inEdges[j].dataIndex, true);
         sourceNodes.push(sourceNode.inEdges[j].node1);
       }
@@ -392,7 +392,7 @@ const GraphEdge = /** @class */ (function () {
       var targetNode = targetNodes[nodeIteratorIndex];
       nodeIteratorIndex++;
       connectedNodesMap.set(targetNode.dataIndex, true);
-      for (var j = 0; j < targetNode.outEdges.length; j++) {
+      for (let j = 0; j < targetNode.outEdges.length; j++) {
         connectedEdgesMap.set(targetNode.outEdges[j].dataIndex, true);
         targetNodes.push(targetNode.outEdges[j].node2);
       }

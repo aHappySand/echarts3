@@ -59,7 +59,7 @@ function barLayoutPolar(seriesType, ecModel, api) {
     var clampLayout = baseAxis.dim !== 'radius' ||
       !seriesModel.get('roundCap', true);
     var valueAxisStart = valueAxis.dataToCoord(0);
-    for (var idx = 0, len = data.count(); idx < len; idx++) {
+    for (let idx = 0, len = data.count(); idx < len; idx++) {
       var value = data.get(valueDim, idx);
       var baseValue = data.get(baseDim, idx);
       var sign = value >= 0 ? 'p' : 'n';
@@ -77,10 +77,10 @@ function barLayoutPolar(seriesType, ecModel, api) {
         // Should also consider #4243
         baseCoord = lastStackCoords[stackId][baseValue][sign];
       }
-      var r0 = void 0;
-      var r = void 0;
-      var startAngle = void 0;
-      var endAngle = void 0;
+      var r0;
+      var r;
+      var startAngle;
+      var endAngle;
       // radial sector
       if (valueAxis.dim === 'radius') {
         var radiusSpan = valueAxis.dataToCoord(value) - valueAxisStart;

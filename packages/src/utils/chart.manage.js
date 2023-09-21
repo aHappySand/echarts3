@@ -1,13 +1,14 @@
 import {
   RenderManager,
-  SceneManager,
-} from './chart.draw.js';
 
-import { randomColor } from './randomColor';
+} from './chart.render.js';
+
+import { VirtualDom } from '../virtual';
+
+import * as echarts from '../../echarts/index.js';
+
 
 const postMsg = self.postMessage;
-
-const VIRTUAL_DIAMETER = 1000;
 
 
 function Container({ gridData, props }) {
@@ -15,7 +16,7 @@ function Container({ gridData, props }) {
 
   this.setProps(props);
 
-  this.render = new RenderManager(this.props.canvas);
+  this.render = new RenderManager(this.props);
   this.splitCanvas(gridData);
 
   Object.defineProperty(this, 'inited', {
@@ -34,6 +35,7 @@ Container.prototype = {
       canBoxChoose: 1, // 0不可以，1单次框选，2多次框选
       canSingleChoose: true,
     };
+    props.virtualCanvas = VirtualDom(props.virtualCanvas);
     this.props = Object.assign(this.props || {}, defaultOptions, props);
   },
   get row() {
@@ -61,6 +63,7 @@ Container.prototype = {
     const total = gridData.length;
     const pageNum = Math.ceil(total / this.gridSize);
     const grid = [];
+    // eslint-disable-next-line no-labels
     for_one:
     for (let p = 1; p <= pageNum; p++) {
       for (let r = 0; r < this.row; r++) {
@@ -75,6 +78,7 @@ Container.prototype = {
             });
             grid.push(objGrid);
           } else {
+            // eslint-disable-next-line no-labels
             break for_one;
           }
         }
@@ -88,16 +92,16 @@ Container.prototype = {
       split: (this.grid || []).map(gManager => gManager.toJson()),
     };
   },
-  directDraw({ items }) {
+  directDraw({ items, theme, chartOpts }) {
     const scenes = [];
     items.forEach(({ dom, index }) => {
       const grid = this.grid[index];
-      grid.createScene(dom);
+      grid.createScene(dom, theme, chartOpts);
       grid.directDraw();
-      scenes.push(grid.scene);
+      scenes.push(grid.chart);
     });
     this.render.render(scenes);
-    // postMsg({ type: 'drawed'});
+    postMsg({ type: 'drawed' });
   },
   directDrawCurrent() {
     const size = this.row * this.col;
@@ -117,6 +121,10 @@ Container.prototype = {
   getGridByIndex(index) {
     return this.grid[index];
   },
+  destroy() {
+    this.gridData = null;
+    this.render.destroy();
+  }
 };
 
 /**
@@ -125,12 +133,11 @@ Container.prototype = {
  * @constructor
  */
 let gridId = 0;
-
 function GridManager(options) {
   const defaultOpt = {
     id: gridId++,
     scale: 1,
-    scene: null,
+    chart: null,
     data: {},
   };
 
@@ -138,102 +145,49 @@ function GridManager(options) {
   for (const key in options) {
     this[key] = options[key];
   }
-  this.setOtherProperty();
   this.init();
-  this.parseOption();
 }
 
-GridManager.prototype = {
-  createScene(dom) {
-    if (!this.scene) {
-      const { render } = this.container;
 
-      this.scene = new SceneManager({
-        dom,
-        option: this.chartOption,
-        render,
-        virtualDiameter: VIRTUAL_DIAMETER,
-      });
+GridManager.prototype = {
+  createScene(dom, theme, opts) {
+    if (!this.chart) {
+      dom = VirtualDom(dom);
+
+      const { render } = this.container;
+      opts = opts || {};
+      opts.render = render;
+      this.chart = echarts.init(dom, theme, opts);
+      this.addEvent();
     } else {
-      this.scene.dom = dom;
-      this.scene.updateCamera();
+      const vDom = this.chart._dom;
+      vDom.cloneDom(dom);
+      // this.chart.updateCamera();
     }
     return this;
-  },
-  parseOption() {
-    function random(len) {
-      return Math.floor(Math.random() * len);
-    }
-
-    const sourceData = [];
-    const xAxis = (new Array(20)).fill('').map((v, i) => i);
-    const xLen = xAxis.length - 1;
-    const yAxis = [];
-    let maxValue = Number.MIN_SAFE_INTEGER;
-    let minValue = Number.MAX_SAFE_INTEGER;
-
-
-    function randomData() {
-      const sourceData = [];
-      for (let i = 0; i < 1000; i++) {
-        const yv = Math.random() * 1000;
-        yAxis[i] = yv;
-        if (minValue > yv) {
-          minValue = yv;
-        }
-        if (maxValue < yv) {
-          maxValue = yv;
-        }
-        sourceData[i] = [xAxis[random(xLen)], yv];
-      }
-      return sourceData;
-    }
-
-
-    // for (let i = 0; i < 1000; i++) {
-    //   const yv = Math.random() * 1000;
-    //   yAxis[i] = yv;
-    //   if (minValue > yv) {
-    //     minValue = yv;
-    //   }
-    //   if (maxValue < yv) {
-    //     maxValue = yv;
-    //   }
-    //   sourceData[i] = [xAxis[random(xLen)], yv];
-    // }
-    const series = (new Array(1)).fill().map((v, i) => ({
-      symbol: 'circle',
-      name: `test测试${i}`,
-      data: randomData(),
-      color: randomColor()
-    }));
-
-    const xAxisData = [{ data: [], type: 'value', minValue: 0, maxValue: xLen }];
-    const yAxisData = [{ data: yAxis, minValue, maxValue }];
-    this.chartOption = {
-      series,
-      yAxisData,
-      xAxisData
-    };
   },
   init() {
 
   },
-  setOtherProperty() {
-
+  addEvent() {
+    // this.chart.on('mouseover', (e) => {
+    //   const handleType = e.event.handleType;
+    //   switch (handleType) {
+    //     case 'showInfo': {
+    //
+    //     }
+    //   }
+    // });
   },
   directDraw() {
-    console.time('draw');
-    this.scene.drawXAxis(this.chartOption.xAxisData);
-    this.scene.drawYAxis(this.chartOption.yAxisData);
-    this.scene.drawPoint(this.chartOption);
-    this.scene.resetAxisPosition();
-    console.timeEnd('draw');
+    this.chart.setOption(this.data.option);
   },
-
+  trigger(eventName, event) {
+    this.container.render.trigger(eventName, event);
+  },
   toJson() {
     const data = {
-      option: this.data.option,
+      // option: this.data.option,
     };
 
     return {
@@ -243,19 +197,23 @@ GridManager.prototype = {
       data,
     };
   },
-
+  normalEvent(event) {
+    event.pickedObject = this.chart.scene.getPickedObject({ x: event.ndcX, y: event.ndcY });
+  },
   handleShowInfo(event) {
-    const data = this.scene.showInfo(event);
-    if (data) {
+    this.normalEvent(event);
+    if (event.pickedObject) {
       this.hasShowInfo = true;
-      postMsg({ type: this.type, data, index: this.index });
+      event.handleType = 'showInfo';
+
+      this.container.render.virtualCanvas.dispatchEvent(event);
     } else if (this.hasShowInfo) {
       this.hasShowInfo = false;
       postMsg({ type: this.type, index: this.index });
     }
   },
   handleOrbitControls(data) {
-    this.scene.vDom.dispatchEvent(data);
+    this.chart.vDom.dispatchEvent(data);
   }
 };
 
@@ -296,6 +254,7 @@ export default function () {
     mousemoveInfo(e) {
       const { event } = e.data;
       const grid = this.getGrid(e);
+      event.msgType = grid.type;
       grid.handleShowInfo(event);
     },
 
@@ -303,6 +262,11 @@ export default function () {
       const { data } = e.data;
       const grid = this.getGrid(e);
       grid.handleOrbitControls(data);
+    },
+
+    destroy() {
+      this.container.destroy();
+      postMsg({ type: 'destroy' });
     }
   };
 }

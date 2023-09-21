@@ -130,7 +130,7 @@ function getListCache(axis, prop) {
 }
 
 function listCacheGet(cache, key) {
-  for (var i = 0; i < cache.length; i++) {
+  for (let i = 0; i < cache.length; i++) {
     if (cache[i].key === key) {
       return cache[i].value;
     }

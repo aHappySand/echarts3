@@ -92,7 +92,7 @@ function createExternalSource(internalSource, externalTransform) {
     // For the logic simplicity in transformer, only 'culumn' is
     // supported in data transform. Otherwise, the `dimensionsDefine`
     // might be detected by 'row', which probably confuses users.
-    if (__DEV__) {
+    if (self.__DEV__) {
       errMsg = '`seriesLayoutBy` of upstream dataset can only be "column" in data transform.';
     }
     throwError(errMsg);
@@ -123,7 +123,7 @@ function createExternalSource(internalSource, externalTransform) {
         // new name like module `completeDimensions.ts` did, but just tell users.
         var errMsg_1 = '';
         if (hasOwn(dimsByName, name)) {
-          if (__DEV__) {
+          if (self.__DEV__) {
             errMsg_1 = `dimension name "${name}" duplicated.`;
           }
           throwError(errMsg_1);
@@ -135,7 +135,7 @@ function createExternalSource(internalSource, externalTransform) {
   // If dimension definitions are not defined and can not be detected.
   // e.g., pure data `[[11, 22], ...]`.
   else {
-    for (var i = 0; i < internalSource.dimensionsDetectedCount || 0; i++) {
+    for (let i = 0; i < internalSource.dimensionsDetectedCount || 0; i++) {
       // Do not generete name or anything others. The consequence process in
       // `transform` or `series` probably have there own name generation strategry.
       dimensions.push({ index: i });
@@ -176,7 +176,7 @@ function getRawData(upstream) {
   var sourceFormat = upstream.sourceFormat;
   if (!isSupportedSourceFormat(sourceFormat)) {
     var errMsg = '';
-    if (__DEV__) {
+    if (self.__DEV__) {
       errMsg = `\`getRawData\` is not supported in source format ${sourceFormat}`;
     }
     throwError(errMsg);
@@ -189,21 +189,21 @@ function cloneRawData(upstream) {
   var data = upstream.data;
   if (!isSupportedSourceFormat(sourceFormat)) {
     var errMsg = '';
-    if (__DEV__) {
+    if (self.__DEV__) {
       errMsg = `\`cloneRawData\` is not supported in source format ${sourceFormat}`;
     }
     throwError(errMsg);
   }
   if (sourceFormat === SOURCE_FORMAT_ARRAY_ROWS) {
     var result = [];
-    for (var i = 0, len = data.length; i < len; i++) {
+    for (let i = 0, len = data.length; i < len; i++) {
       // Not strictly clone for performance
       result.push(data[i].slice());
     }
     return result;
   } if (sourceFormat === SOURCE_FORMAT_OBJECT_ROWS) {
     var result = [];
-    for (var i = 0, len = data.length; i < len; i++) {
+    for (let i = 0, len = data.length; i < len; i++) {
       // Not strictly clone for performance
       result.push(extend({}, data[i]));
     }
@@ -236,14 +236,14 @@ export function registerExternalTransform(externalTransform) {
   var type = externalTransform.type;
   var errMsg = '';
   if (!type) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       errMsg = 'Must have a `type` when `registerTransform`.';
     }
     throwError(errMsg);
   }
   var typeParsed = type.split(':');
   if (typeParsed.length !== 2) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       errMsg = 'Name must include namespace like "ns:regression".';
     }
     throwError(errMsg);
@@ -264,12 +264,12 @@ export function applyDataTransform(rawTransOption, sourceList, infoForPrint) {
   var pipeLen = pipedTransOption.length;
   var errMsg = '';
   if (!pipeLen) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       errMsg = 'If `transform` declared, it should at least contain one transform.';
     }
     throwError(errMsg);
   }
-  for (var i = 0, len = pipeLen; i < len; i++) {
+  for (let i = 0, len = pipeLen; i < len; i++) {
     var transOption = pipedTransOption[i];
     sourceList = applySingleDataTransform(transOption, sourceList, infoForPrint, pipeLen === 1 ? null : i);
     // piped transform only support single input, except the fist one.
@@ -286,13 +286,13 @@ function applySingleDataTransform(transOption, upSourceList, infoForPrint,
   pipeIndex) {
   var errMsg = '';
   if (!upSourceList.length) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       errMsg = 'Must have at least one upstream dataset.';
     }
     throwError(errMsg);
   }
   if (!isObject(transOption)) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       errMsg = `transform declaration must be an object rather than ${typeof transOption}.`;
     }
     throwError(errMsg);
@@ -300,7 +300,7 @@ function applySingleDataTransform(transOption, upSourceList, infoForPrint,
   var transType = transOption.type;
   var externalTransform = externalTransformMap.get(transType);
   if (!externalTransform) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       errMsg = `Can not find transform on type "${transType}".`;
     }
     throwError(errMsg);
@@ -312,7 +312,7 @@ function applySingleDataTransform(transOption, upSourceList, infoForPrint,
     upstreamList: extUpSourceList,
     config: clone(transOption.config)
   }));
-  if (__DEV__) {
+  if (self.__DEV__) {
     if (transOption.print) {
       var printStrArr = map(resultList, (extSource) => {
         var pipeIndexStr = pipeIndex != null ? ` === pipe index: ${pipeIndex}` : '';
@@ -330,20 +330,20 @@ function applySingleDataTransform(transOption, upSourceList, infoForPrint,
   return map(resultList, (result, resultIndex) => {
     var errMsg = '';
     if (!isObject(result)) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         errMsg = 'A transform should not return some empty results.';
       }
       throwError(errMsg);
     }
     if (!result.data) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         errMsg = 'Transform result data should be not be null or undefined';
       }
       throwError(errMsg);
     }
     var sourceFormat = detectSourceFormat(result.data);
     if (!isSupportedSourceFormat(sourceFormat)) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         errMsg = 'Transform result data should be array rows or object rows.';
       }
       throwError(errMsg);

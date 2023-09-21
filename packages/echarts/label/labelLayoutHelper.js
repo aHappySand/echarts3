@@ -20,7 +20,7 @@ import { BoundingRect, OrientedBoundingRect } from '../util/graphic';
 
 export function prepareLayoutList(input) {
   var list = [];
-  for (var i = 0; i < input.length; i++) {
+  for (let i = 0; i < input.length; i++) {
     var rawItem = input[i];
     if (rawItem.defaultAttr.ignore) {
       continue;
@@ -65,7 +65,7 @@ function shiftLayout(list, xyDim, sizeDim, minBound, maxBound, balanceShift) {
   var adjusted = false;
   var shifts = [];
   var totalShifts = 0;
-  for (var i = 0; i < len; i++) {
+  for (let i = 0; i < len; i++) {
     var item = list[i];
     var rect = item.rect;
     delta = rect[xyDim] - lastPos;
@@ -130,7 +130,7 @@ function shiftLayout(list, xyDim, sizeDim, minBound, maxBound, balanceShift) {
     if (delta !== 0) {
       adjusted = true;
     }
-    for (var i = start; i < end; i++) {
+    for (let i = start; i < end; i++) {
       var item = list[i];
       var rect = item.rect;
       rect[xyDim] += delta;
@@ -142,7 +142,7 @@ function shiftLayout(list, xyDim, sizeDim, minBound, maxBound, balanceShift) {
   function squeezeGaps(delta, maxSqeezePercent) {
     var gaps = [];
     var totalGaps = 0;
-    for (var i = 1; i < len; i++) {
+    for (let i = 1; i < len; i++) {
       var prevItemRect = list[i - 1].rect;
       var gap = Math.max(list[i].rect[xyDim] - prevItemRect[xyDim] - prevItemRect[sizeDim], 0);
       gaps.push(gap);
@@ -153,7 +153,7 @@ function shiftLayout(list, xyDim, sizeDim, minBound, maxBound, balanceShift) {
     }
     var squeezePercent = Math.min(Math.abs(delta) / totalGaps, maxSqeezePercent);
     if (delta > 0) {
-      for (var i = 0; i < len - 1; i++) {
+      for (let i = 0; i < len - 1; i++) {
         // Distribute the shift delta to all gaps.
         var movement = gaps[i] * squeezePercent;
         // Forward
@@ -161,7 +161,7 @@ function shiftLayout(list, xyDim, sizeDim, minBound, maxBound, balanceShift) {
       }
     } else {
       // Backward
-      for (var i = len - 1; i > 0; i--) {
+      for (let i = len - 1; i > 0; i--) {
         // Distribute the shift delta to all gaps.
         var movement = gaps[i - 1] * squeezePercent;
         shiftList(-movement, i, len);
@@ -177,7 +177,7 @@ function shiftLayout(list, xyDim, sizeDim, minBound, maxBound, balanceShift) {
     var dir = delta < 0 ? -1 : 1;
     delta = Math.abs(delta);
     var moveForEachLabel = Math.ceil(delta / (len - 1));
-    for (var i = 0; i < len - 1; i++) {
+    for (let i = 0; i < len - 1; i++) {
       if (dir > 0) {
         // Forward
         shiftList(moveForEachLabel, 0, i + 1);
@@ -223,17 +223,10 @@ export function hideOverlap(labelList) {
   var globalRect = new BoundingRect(0, 0, 0, 0);
 
   function hideEl(el) {
-    if (!el.ignore) {
-      // Show on emphasis.
-      var emphasisState = el.ensureState('emphasis');
-      if (emphasisState.ignore == null) {
-        emphasisState.ignore = false;
-      }
-    }
     el.ignore = true;
   }
 
-  for (var i = 0; i < labelList.length; i++) {
+  for (let i = 0; i < labelList.length; i++) {
     var labelItem = labelList[i];
     var isAxisAligned = labelItem.axisAligned;
     var localRect = labelItem.localRect;
@@ -248,7 +241,7 @@ export function hideOverlap(labelList) {
     globalRect.y += 0.05;
     var obb = labelItem.obb;
     var overlapped = false;
-    for (var j = 0; j < displayedLabels.length; j++) {
+    for (let j = 0; j < displayedLabels.length; j++) {
       var existsTextCfg = displayedLabels[j];
       // Fast rejection.
       if (!globalRect.intersect(existsTextCfg.rect)) {
@@ -274,8 +267,10 @@ export function hideOverlap(labelList) {
       hideEl(label);
       labelLine && hideEl(labelLine);
     } else {
-      label.attr('ignore', labelItem.defaultAttr.ignore);
-      labelLine && labelLine.attr('ignore', labelItem.defaultAttr.labelGuideIgnore);
+      label.ignore = labelItem.defaultAttr.ignore;
+      if (labelLine) {
+        labelLine.ignore = labelItem.defaultAttr.ignore;
+      }
       displayedLabels.push(labelItem);
     }
   }

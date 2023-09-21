@@ -93,9 +93,18 @@ const DataDiffer = /** @class */ (function () {
     var newDataIndexMap = {};
     var oldDataKeyArr = new Array(oldArr.length);
     var newDataKeyArr = new Array(newArr.length);
+    console.log(oldArr.length, newArr.length, 'length');
+
+    console.time('_oldKeyGetter');
     this._initIndexMap(oldArr, null, oldDataKeyArr, '_oldKeyGetter');
+    console.timeEnd('_oldKeyGetter');
+    console.time('_newKeyGetter');
+
     this._initIndexMap(newArr, newDataIndexMap, newDataKeyArr, '_newKeyGetter');
-    for (var i = 0; i < oldArr.length; i++) {
+    console.timeEnd('_newKeyGetter');
+    console.time('_update');
+
+    for (let i = 0; i < oldArr.length; i++) {
       var oldKey = oldDataKeyArr[i];
       var newIdxMapVal = newDataIndexMap[oldKey];
       var newIdxMapValLen = dataIndexMapValueLength(newIdxMapVal);
@@ -115,7 +124,11 @@ const DataDiffer = /** @class */ (function () {
         this._remove && this._remove(i);
       }
     }
+    console.timeEnd('_update');
+    console.time('_performRestAdd');
+
     this._performRestAdd(newDataKeyArr, newDataIndexMap);
+    console.timeEnd('_performRestAdd');
   };
   /**
    * For example, consider the case:
@@ -151,7 +164,7 @@ const DataDiffer = /** @class */ (function () {
     var newDataKeyArr = [];
     this._initIndexMap(oldArr, oldDataIndexMap, oldDataKeyArr, '_oldKeyGetter');
     this._initIndexMap(newArr, newDataIndexMap, newDataKeyArr, '_newKeyGetter');
-    for (var i = 0; i < oldDataKeyArr.length; i++) {
+    for (let i = 0; i < oldDataKeyArr.length; i++) {
       var oldKey = oldDataKeyArr[i];
       var oldIdxMapVal = oldDataIndexMap[oldKey];
       var newIdxMapVal = newDataIndexMap[oldKey];
@@ -170,7 +183,7 @@ const DataDiffer = /** @class */ (function () {
         this._updateManyToMany && this._updateManyToMany(newIdxMapVal, oldIdxMapVal);
         newDataIndexMap[oldKey] = null;
       } else if (oldIdxMapValLen > 1) {
-        for (var i_1 = 0; i_1 < oldIdxMapValLen; i_1++) {
+        for (let i_1 = 0; i_1 < oldIdxMapValLen; i_1++) {
           this._remove && this._remove(oldIdxMapVal[i_1]);
         }
       } else {
@@ -180,12 +193,12 @@ const DataDiffer = /** @class */ (function () {
     this._performRestAdd(newDataKeyArr, newDataIndexMap);
   };
   DataDiffer.prototype._performRestAdd = function (newDataKeyArr, newDataIndexMap) {
-    for (var i = 0; i < newDataKeyArr.length; i++) {
+    for (let i = 0; i < newDataKeyArr.length; i++) {
       var newKey = newDataKeyArr[i];
       var newIdxMapVal = newDataIndexMap[newKey];
       var idxMapValLen = dataIndexMapValueLength(newIdxMapVal);
       if (idxMapValLen > 1) {
-        for (var j = 0; j < idxMapValLen; j++) {
+        for (let j = 0; j < idxMapValLen; j++) {
           this._add && this._add(newIdxMapVal[j]);
         }
       } else if (idxMapValLen === 1) {
@@ -203,7 +216,7 @@ const DataDiffer = /** @class */ (function () {
     //     its indices are accurately corresponding to `arr`.
     keyArr, keyGetterName) {
     var cbModeMultiple = this._diffModeMultiple;
-    for (var i = 0; i < arr.length; i++) {
+    for (let i = 0; i < arr.length; i++) {
       // Add prefix to avoid conflict with Object.prototype.
       var key = `_ec_${this[keyGetterName](arr[i], i)}`;
       if (!cbModeMultiple) {

@@ -85,10 +85,10 @@ const SeriesDataSchema = /** @class */ (function () {
     // Generate from seriesDimList directly
     var dimHash = '';
     var dims = [];
-    for (var fullDimIdx = 0, seriesDimIdx = 0; fullDimIdx < dimCount; fullDimIdx++) {
-      var property = void 0;
-      var type = void 0;
-      var ordinalMeta = void 0;
+    for (let fullDimIdx = 0, seriesDimIdx = 0; fullDimIdx < dimCount; fullDimIdx++) {
+      var property;
+      var type;
+      var ordinalMeta;
       var seriesDimDef = this.dimensions[seriesDimIdx];
       // The list has been sorted by `storeDimIndex` asc.
       if (seriesDimDef && seriesDimDef.storeDimIndex === fullDimIdx) {
@@ -144,8 +144,8 @@ const SeriesDataSchema = /** @class */ (function () {
   };
   SeriesDataSchema.prototype.makeOutputDimensionNames = function () {
     var result = [];
-    for (var fullDimIdx = 0, seriesDimIdx = 0; fullDimIdx < this._fullDimCount; fullDimIdx++) {
-      var name_1 = void 0;
+    for (let fullDimIdx = 0, seriesDimIdx = 0; fullDimIdx < this._fullDimCount; fullDimIdx++) {
+      var name_1;
       var seriesDimDef = this.dimensions[seriesDimIdx];
       // The list has been sorted by `storeDimIndex` asc.
       if (seriesDimDef && seriesDimDef.storeDimIndex === fullDimIdx) {
@@ -182,7 +182,7 @@ export function isSeriesDataSchema(schema) {
 
 export function createDimNameMap(dimsDef) {
   var dataDimNameMap = createHashMap();
-  for (var i = 0; i < (dimsDef || []).length; i++) {
+  for (let i = 0; i < (dimsDef || []).length; i++) {
     var dimDefItemRaw = dimsDef[i];
     var userDimName = isObject(dimDefItemRaw) ? dimDefItemRaw.name : dimDefItemRaw;
     if (userDimName != null && dataDimNameMap.get(userDimName) == null) {

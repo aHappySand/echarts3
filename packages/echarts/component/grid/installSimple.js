@@ -18,11 +18,13 @@
 */
 import { __extends } from 'tslib';
 import ComponentView from '../../view/Component';
-import { Rect } from '../../util/graphic';
+// import { Rect } from '../../util/graphic';
 import { CartesianAxisModel } from '../../coord/cartesian/AxisModel';
 import axisModelCreator from '../../coord/axisModelCreator';
 import GridModel from '../../coord/cartesian/GridModel';
 import Grid from '../../coord/cartesian/Grid';
+import { CartesianXAxisView, CartesianYAxisView } from '../axis/CartesianAxisView';
+
 import { defaults } from '../../../zrender/core/util';
 // Grid view
 const GridView = /** @class */ (function (_super) {
@@ -37,14 +39,14 @@ const GridView = /** @class */ (function (_super) {
   GridView.prototype.render = function (gridModel, ecModel) {
     this.group.removeAll();
     if (gridModel.get('show')) {
-      this.group.add(new Rect({
-        shape: gridModel.coordinateSystem.getRect(),
-        style: defaults({
-          fill: gridModel.get('backgroundColor')
-        }, gridModel.getItemStyle()),
-        silent: true,
-        z2: -1
-      }));
+      // this.group.add(new Rect({
+      //   shape: gridModel.coordinateSystem.getRect(),
+      //   style: defaults({
+      //     fill: gridModel.get('backgroundColor')
+      //   }, gridModel.getItemStyle()),
+      //   silent: true,
+      //   z2: -1
+      // }));
     }
   };
   GridView.type = 'grid';
@@ -62,6 +64,8 @@ export function install(registers) {
   registers.registerCoordinateSystem('cartesian2d', Grid);
   axisModelCreator(registers, 'x', CartesianAxisModel, extraOption);
   axisModelCreator(registers, 'y', CartesianAxisModel, extraOption);
+  registers.registerComponentView(CartesianXAxisView);
+  registers.registerComponentView(CartesianYAxisView);
   registers.registerPreprocessor((option) => {
     // Only create grid when need
     if (option.xAxis && option.yAxis && !option.grid) {

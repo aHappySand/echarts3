@@ -43,7 +43,7 @@ export function getDecalFromPalette(ecModel, name, scope, requestNum) {
 function getNearestPalette(palettes, requestColorNum) {
   var paletteNum = palettes.length;
   // TODO palettes must be in order
-  for (var i = 0; i < paletteNum; i++) {
+  for (let i = 0; i < paletteNum; i++) {
     if (palettes[i].length > requestColorNum) {
       return palettes[i];
     }

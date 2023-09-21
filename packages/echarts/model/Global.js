@@ -56,9 +56,9 @@ import { error, warn } from '../util/log';
 // -----------------------
 // Internal method names:
 // -----------------------
-const reCreateSeriesIndices;
-const assertSeriesInitialized;
-const initBase;
+let reCreateSeriesIndices;
+let assertSeriesInitialized;
+let initBase;
 const OPTION_INNER_KEY = '\0_ec_inner';
 const OPTION_INNER_VALUE = 1;
 const BUITIN_COMPONENTS_MAP = {
@@ -143,7 +143,7 @@ const GlobalModel = /** @class */ (function (_super) {
     this._optionManager = optionManager;
   };
   GlobalModel.prototype.setOption = function (option, opts, optionPreprocessorFuncs) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       assert(option != null, 'option is null/undefined');
       assert(option[OPTION_INNER_KEY] !== OPTION_INNER_VALUE, 'please use chart.getOption()');
     }
@@ -166,7 +166,7 @@ const GlobalModel = /** @class */ (function (_super) {
     var optionManager = this._optionManager;
     if (!type || type === 'recreate') {
       var baseOption = optionManager.mountOption(type === 'recreate');
-      if (__DEV__) {
+      if (self.__DEV__) {
         checkMissingComponents(baseOption);
       }
       if (!this.option || type === 'recreate') {
@@ -288,7 +288,7 @@ const GlobalModel = /** @class */ (function (_super) {
           var ComponentModelClass = ComponentModel.getClass(mainType, resultItem.keyInfo.subType, !isSeriesType // Give a more detailed warn later if series don't exists
           );
           if (!ComponentModelClass) {
-            if (__DEV__) {
+            if (self.__DEV__) {
               var subType = resultItem.keyInfo.subType;
               var seriesImportName = BUILTIN_CHARTS_MAP[subType];
               if (!componetsMissingLogPrinted[subType]) {
@@ -305,7 +305,7 @@ const GlobalModel = /** @class */ (function (_super) {
           // TODO Before multiple tooltips get supported, we do this check to avoid unexpected exception.
           if (mainType === 'tooltip') {
             if (tooltipExists) {
-              if (__DEV__) {
+              if (self.__DEV__) {
                 if (!tooltipWarningLogged) {
                   warn('Currently only one tooltip component is allowed.');
                   tooltipWarningLogged = true;
@@ -376,7 +376,7 @@ const GlobalModel = /** @class */ (function (_super) {
         // compatible for users: if inner cmpt at last, splice the returned array.
         var realLen = opts.length;
         var metNonInner = false;
-        for (var i = realLen - 1; i >= 0; i--) {
+        for (let i = realLen - 1; i >= 0; i--) {
           // Remove options with inner id.
           if (opts[i] && !modelUtil.isComponentIdInternal(opts[i])) {
             metNonInner = true;
@@ -414,7 +414,7 @@ const GlobalModel = /** @class */ (function (_super) {
       if (cmpt) {
         return cmpt;
       } if (idx == null) {
-        for (var i = 0; i < list.length; i++) {
+        for (let i = 0; i < list.length; i++) {
           if (list[i]) {
             return list[i];
           }
@@ -509,7 +509,7 @@ const GlobalModel = /** @class */ (function (_super) {
       var ctxForAll_1 = cb;
       var cbForAll_1 = mainType;
       componentsMap.each((cmpts, componentType) => {
-        for (var i = 0; cmpts && i < cmpts.length; i++) {
+        for (let i = 0; cmpts && i < cmpts.length; i++) {
           var cmpt = cmpts[i];
           cmpt && cbForAll_1.call(ctxForAll_1, componentType, cmpt, cmpt.componentIndex);
         }
@@ -520,7 +520,7 @@ const GlobalModel = /** @class */ (function (_super) {
         : isObject(mainType)
           ? this.findComponents(mainType)
           : null;
-      for (var i = 0; cmpts && i < cmpts.length; i++) {
+      for (let i = 0; cmpts && i < cmpts.length; i++) {
         var cmpt = cmpts[i];
         cmpt && cb.call(context, cmpt, cmpt.componentIndex);
       }
@@ -647,7 +647,7 @@ const GlobalModel = /** @class */ (function (_super) {
     assertSeriesInitialized = function (ecModel) {
       // Components that use _seriesIndices should depends on series component,
       // which make sure that their initialization is after series.
-      if (__DEV__) {
+      if (self.__DEV__) {
         if (!ecModel._seriesIndices) {
           throw new Error('Option should contains series.');
         }
@@ -740,7 +740,7 @@ function filterBySubType(components, condition) {
 function normalizeSetOptionInput(opts) {
   var replaceMergeMainTypeMap = createHashMap();
   opts && each(modelUtil.normalizeToArray(opts.replaceMerge), (mainType) => {
-    if (__DEV__) {
+    if (self.__DEV__) {
       assert(ComponentModel.hasClass(mainType), `"${mainType}" is not valid component main type in "replaceMerge"`);
     }
     replaceMergeMainTypeMap.set(mainType, true);

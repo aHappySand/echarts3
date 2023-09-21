@@ -19,7 +19,7 @@ export function fromPoints(points, min, max) {
   var right = p[0];
   var top = p[1];
   var bottom = p[1];
-  for (var i = 1; i < points.length; i++) {
+  for (let i = 1; i < points.length; i++) {
     p = points[i];
     left = mathMin(left, p[0]);
     right = mathMax(right, p[0]);
@@ -50,13 +50,13 @@ export function fromCubic(x0, y0, x1, y1, x2, y2, x3, y3, min, max) {
   min[1] = Infinity;
   max[0] = -Infinity;
   max[1] = -Infinity;
-  for (var i = 0; i < n; i++) {
+  for (let i = 0; i < n; i++) {
     var x = cubicAt(x0, x1, x2, x3, xDim[i]);
     min[0] = mathMin(x, min[0]);
     max[0] = mathMax(x, max[0]);
   }
   n = cubicExtrema(y0, y1, y2, y3, yDim);
-  for (var i = 0; i < n; i++) {
+  for (let i = 0; i < n; i++) {
     var y = cubicAt(y0, y1, y2, y3, yDim[i]);
     min[1] = mathMin(y, min[1]);
     max[1] = mathMax(y, max[1]);
@@ -119,7 +119,7 @@ export function fromArc(x, y, rx, ry, startAngle, endAngle, anticlockwise, min, 
     endAngle = startAngle;
     startAngle = tmp;
   }
-  for (var angle = 0; angle < endAngle; angle += Math.PI / 2) {
+  for (let angle = 0; angle < endAngle; angle += Math.PI / 2) {
     if (angle > startAngle) {
       extremity[0] = mathCos(angle) * rx + x;
       extremity[1] = mathSin(angle) * ry + y;

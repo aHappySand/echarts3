@@ -22,7 +22,7 @@ const samplers = {
   average(frame) {
     var sum = 0;
     var count = 0;
-    for (var i = 0; i < frame.length; i++) {
+    for (let i = 0; i < frame.length; i++) {
       if (!isNaN(frame[i])) {
         sum += frame[i];
         count++;
@@ -33,7 +33,7 @@ const samplers = {
   },
   sum(frame) {
     var sum = 0;
-    for (var i = 0; i < frame.length; i++) {
+    for (let i = 0; i < frame.length; i++) {
       // Ignore NaN
       sum += frame[i] || 0;
     }
@@ -41,7 +41,7 @@ const samplers = {
   },
   max(frame) {
     var max = -Infinity;
-    for (var i = 0; i < frame.length; i++) {
+    for (let i = 0; i < frame.length; i++) {
       frame[i] > max && (max = frame[i]);
     }
     // NaN will cause illegal axis extent.
@@ -49,7 +49,7 @@ const samplers = {
   },
   min(frame) {
     var min = Infinity;
-    for (var i = 0; i < frame.length; i++) {
+    for (let i = 0; i < frame.length; i++) {
       frame[i] < min && (min = frame[i]);
     }
     // NaN will cause illegal axis extent.
@@ -87,7 +87,7 @@ export default function dataSample(seriesType) {
           if (sampling === 'lttb') {
             seriesModel.setData(data.lttbDownSample(data.mapDimension(valueAxis.dim), 1 / rate));
           }
-          var sampler = void 0;
+          var sampler;
           if (isString(sampling)) {
             sampler = samplers[sampling];
           } else if (isFunction(sampling)) {

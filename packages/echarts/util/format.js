@@ -110,12 +110,12 @@ export function formatTpl(tpl, paramsList, encode) {
     return '';
   }
   var $vars = paramsList[0].$vars || [];
-  for (var i = 0; i < $vars.length; i++) {
+  for (let i = 0; i < $vars.length; i++) {
     var alias = TPL_VAR_ALIAS[i];
     tpl = tpl.replace(wrapVar(alias), wrapVar(alias, 0));
   }
-  for (var seriesIdx = 0; seriesIdx < seriesLen; seriesIdx++) {
-    for (var k = 0; k < $vars.length; k++) {
+  for (let seriesIdx = 0; seriesIdx < seriesLen; seriesIdx++) {
+    for (let k = 0; k < $vars.length; k++) {
       var val = paramsList[seriesIdx][$vars[k]];
       tpl = tpl.replace(wrapVar(TPL_VAR_ALIAS[k], seriesIdx), encode ? encodeHTML(val) : val);
     }
@@ -190,7 +190,7 @@ export function getTooltipMarker(inOpt, extraCssText) {
  * @inner
  */
 export function formatTime(tpl, value, isUTC) {
-  if (__DEV__) {
+  if (self.__DEV__) {
     deprecateReplaceLog('echarts.format.formatTime', 'echarts.time.format');
   }
   if (tpl === 'week' ||

@@ -1,9 +1,11 @@
 import { Vue } from 'examples/config';
 
 import {
+  Echarts3
 } from 'main/index';
 
 const components = [
+  Echarts3
 ];
 
 

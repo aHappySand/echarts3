@@ -1,4 +1,7 @@
 import { __extends } from 'tslib';
+import { SceneManager } from '../../src/utils/chart.scene';
+import { throttle } from '../util/throttle';
+
 /*
 * Licensed to the Apache Software Foundation (ASF) under one
 * or more contributor license agreements.  See the NOTICE file
@@ -34,7 +37,6 @@ import {
   isArray,
   noop,
   isString,
-  retrieve2
 } from '../../zrender/core/util';
 import env from '../../zrender/core/env';
 import timsort from '../../zrender/core/timsort';
@@ -76,7 +78,8 @@ import {
   handleGlobalMouseOutForHighDown
 } from '../util/states';
 import * as modelUtil from '../util/model';
-import { throttle } from '../util/throttle';
+import Animation from '../../zrender/animation/Animation';
+
 import { seriesStyleTask, dataStyleTask, dataColorPaletteTask } from '../visual/style';
 import Scheduler from './Scheduler';
 import lightTheme from '../theme/light';
@@ -92,6 +95,8 @@ import { findEventDispatcher } from '../util/event';
 import decal from '../visual/decal';
 import lifecycle from './lifecycle';
 import { getImpl } from './impl';
+import ComponentView from '../view/Component';
+import ChartView from '../view/Chart';
 
 export const version = '5.4.3';
 export const dependencies = {
@@ -154,11 +159,12 @@ const CONNECT_STATUS_KEY = '__connectUpdateStatus';
 const CONNECT_STATUS_PENDING = 0;
 const CONNECT_STATUS_UPDATING = 1;
 const CONNECT_STATUS_UPDATED = 2;
+const VIRTUAL_DIAMETER = 1000;
 
 function createRegisterEventWithLowercaseECharts(method) {
   return function () {
     var args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
+    for (let _i = 0; _i < arguments.length; _i++) {
       args[_i] = arguments[_i];
     }
     if (this.isDisposed()) {
@@ -172,7 +178,7 @@ function createRegisterEventWithLowercaseECharts(method) {
 function createRegisterEventWithLowercaseMessageCenter(method) {
   return function () {
     var args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
+    for (let _i = 0; _i < arguments.length; _i++) {
       args[_i] = arguments[_i];
     }
     return toLowercaseNameAndCallEventful(this, method, args);
@@ -237,21 +243,11 @@ const ECharts = /** @class */ (function (_super) {
       theme = themeStorage[theme];
     }
     _this._dom = dom;
-    var defaultRenderer = 'canvas';
-    var defaultCoarsePointer = 'auto';
-    var defaultUseDirtyRect = false;
-    if (__DEV__) {
-      var root = (
-        /* eslint-disable-next-line */
-        env.hasGlobalWindow ? window : global);
-      defaultRenderer = root.__ECHARTS__DEFAULT__RENDERER__ || defaultRenderer;
-      defaultCoarsePointer = retrieve2(root.__ECHARTS__DEFAULT__COARSE_POINTER, defaultCoarsePointer);
-      var devUseDirtyRect = root.__ECHARTS__DEFAULT__USE_DIRTY_RECT__;
-      defaultUseDirtyRect = devUseDirtyRect == null
-        ? defaultUseDirtyRect
-        : devUseDirtyRect;
-    }
     _this._ssr = opts.ssr;
+    _this.renderer = opts.render;
+
+    _this._throttledZrFlush = throttle(bind(_this.renderer.flush, _this.renderer), 17);
+
     // Expect 60 fps.
     theme = clone(theme);
     theme && backwardCompat(theme, true);
@@ -267,6 +263,10 @@ const ECharts = /** @class */ (function (_super) {
 
     timsort(visualFuncs, prioritySortFunc);
     timsort(dataProcessorFuncs, prioritySortFunc);
+
+    _this.scene = new SceneManager({ chart: _this, virtualDiameter: VIRTUAL_DIAMETER });
+
+
     _this._scheduler = new Scheduler(_this, api, dataProcessorFuncs, visualFuncs);
     _this._messageCenter = new MessageCenter();
     // Init mouse events
@@ -276,22 +276,92 @@ const ECharts = /** @class */ (function (_super) {
 
     // ECharts instance can be used as value.
     setAsPrimitive(_this);
+
+    _this.renderer.animation.on('frame', _this._onframe, _this);
+    bindRenderedEvent(_this.renderer, _this);
+    bindMouseEvent(_this.renderer, _this);
+
     return _this;
   }
-
+  ECharts.prototype._onframe = function () {
+    console.log('_onframe');
+    if (this._disposed) {
+      return;
+    }
+    applyChangedStates(this);
+    var scheduler = this._scheduler;
+    // Lazy update
+    if (this[PENDING_UPDATE]) {
+      var silent = this[PENDING_UPDATE].silent;
+      this[IN_MAIN_PROCESS_KEY] = true;
+      try {
+        prepare(this);
+        updateMethods.update.call(this, null, this[PENDING_UPDATE].updateParams);
+      } catch (e) {
+        this[IN_MAIN_PROCESS_KEY] = false;
+        this[PENDING_UPDATE] = null;
+        throw e;
+      }
+      // At present, in each frame, zrender performs:
+      //   (1) animation step forward.
+      //   (2) trigger('frame') (where this `_onframe` is called)
+      //   (3) zrender flush (render).
+      // If we do nothing here, since we use `setToFinal: true`, the step (3) above
+      // will render the final state of the elements before the real animation started.
+      this.renderer.flush();
+      this[IN_MAIN_PROCESS_KEY] = false;
+      this[PENDING_UPDATE] = null;
+      flushPendingActions.call(this, silent);
+      triggerUpdatedEvent.call(this, silent);
+    }
+    // Avoid do both lazy update and progress in one frame.
+    else if (scheduler.unfinished) {
+      // Stream progress.
+      var remainTime = TEST_FRAME_REMAIN_TIME;
+      var ecModel = this._model;
+      var api = this._api;
+      scheduler.unfinished = false;
+      do {
+        var startTime = +new Date();
+        scheduler.performSeriesTasks(ecModel);
+        // Currently dataProcessorFuncs do not check threshold.
+        scheduler.performDataProcessorTasks(ecModel);
+        updateStreamModes(this, ecModel);
+        // Do not update coordinate system here. Because that coord system update in
+        // each frame is not a good user experience. So we follow the rule that
+        // the extent of the coordinate system is determined in the first frame (the
+        // frame is executed immediately after task reset.
+        // this._coordSysMgr.update(ecModel, api);
+        // console.log('--- ec frame visual ---', remainTime);
+        scheduler.performVisualTasks(ecModel);
+        renderSeries(this, this._model, api, 'remain', {});
+        remainTime -= (+new Date() - startTime);
+      } while (remainTime > 0 && scheduler.unfinished);
+      // Call flush explicitly for trigger finished event.
+      if (!scheduler.unfinished) {
+        this.renderer.flush();
+      }
+      // Else, zr flushing be ensue within the same frame,
+      // because zr flushing is after onframe event.
+    }
+  };
+  ECharts.prototype.getDom = function () {
+    return this._dom;
+  };
   ECharts.prototype.getId = function () {
     return this.id;
   };
   ECharts.prototype.getZr = function () {
-    // return this._zr;
+    return this.renderer;
   };
   ECharts.prototype.isSSR = function () {
     return this._ssr;
   };
   /* eslint-disable-next-line */
   ECharts.prototype.setOption = function (option, notMerge, lazyUpdate) {
+    console.time('setOption');
     if (this[IN_MAIN_PROCESS_KEY]) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         error('`setOption` should not be called during main process.');
       }
       return;
@@ -319,7 +389,7 @@ const ECharts = /** @class */ (function (_super) {
       ecModel.ssr = this._ssr;
       ecModel.init(null, null, null, theme, this._locale, optionManager);
     }
-    debugger;
+
     this._model.setOption(option, { replaceMerge }, optionPreprocessorFuncs);
     var updateParams = {
       seriesTransition: transitionOpt,
@@ -334,9 +404,15 @@ const ECharts = /** @class */ (function (_super) {
       // `setOption(option, {lazyMode: true})` may be called when zrender has been slept.
       // It should wake it up to make sure zrender start to render at the next frame.
     } else {
+      console.timeEnd('setOption');
+
       try {
+        console.time('prepare------1');
         prepare(this);
+        console.timeEnd('prepare------1');
+        console.time('prepare------2');
         updateMethods.update.call(this, null, updateParams);
+        console.timeEnd('prepare------2');
       } catch (e) {
         this[PENDING_UPDATE] = null;
         this[IN_MAIN_PROCESS_KEY] = false;
@@ -344,6 +420,8 @@ const ECharts = /** @class */ (function (_super) {
       }
       // Ensure zr refresh sychronously, and then pixel in canvas can be
       // fetched after `setOption`.
+      this.renderer.flush();
+
       this[PENDING_UPDATE] = null;
       this[IN_MAIN_PROCESS_KEY] = false;
       flushPendingActions.call(this, silent);
@@ -364,10 +442,10 @@ const ECharts = /** @class */ (function (_super) {
     return this._model && this._model.getOption();
   };
   ECharts.prototype.getWidth = function () {
-    // return this._zr.getWidth();
+    return this._dom.rect.width;
   };
   ECharts.prototype.getHeight = function () {
-    // return this._zr.getHeight();
+    return this._dom.rect.height;
   };
   ECharts.prototype.getDevicePixelRatio = function () {
     return 1;
@@ -380,7 +458,7 @@ const ECharts = /** @class */ (function (_super) {
    * @deprecated Use renderToCanvas instead.
    */
   ECharts.prototype.getRenderedCanvas = function (opts) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       deprecateReplaceLog('getRenderedCanvas', 'renderToCanvas');
     }
     return this.renderToCanvas(opts);
@@ -388,7 +466,7 @@ const ECharts = /** @class */ (function (_super) {
   ECharts.prototype.renderToCanvas = function (opts) {
     opts = opts || {};
     var painter = this._zr.painter;
-    // if (__DEV__) {
+    // if (self.__DEV__) {
     //     if (painter.type !== 'canvas') {
     //         throw new Error('renderToCanvas can only be used in the canvas renderer.');
     //     }
@@ -398,33 +476,9 @@ const ECharts = /** @class */ (function (_super) {
     //     pixelRatio: opts.pixelRatio || this.getDevicePixelRatio()
     // });
   };
-  ECharts.prototype.renderToSVGString = function (opts) {
-    opts = opts || {};
-    // var painter = this._zr.painter;
-    // if (__DEV__) {
-    //     if (painter.type !== 'svg') {
-    //         throw new Error('renderToSVGString can only be used in the svg renderer.');
-    //     }
-    // }
-    // return painter.renderToString({
-    //     useViewBox: opts.useViewBox
-    // });
-  };
   /**
    * Get svg data url
    */
-  ECharts.prototype.getSvgDataURL = function () {
-    if (!env.svgSupported) {
-
-    }
-    // var zr = this._zr;
-    // var list = zr.storage.getDisplayList();
-    // // Stop animations
-    // each(list, function (el) {
-    //     el.stopAnimation(null, true);
-    // });
-    // return zr.painter.toDataURL();
-  };
   ECharts.prototype.getDataURL = function (opts) {
     if (this._disposed) {
       disposedWarning(this.id);
@@ -575,14 +629,14 @@ const ECharts = /** @class */ (function (_super) {
           if (view && view.containPoint) {
             result = result || view.containPoint(value, model);
           } else {
-            if (__DEV__) {
+            if (self.__DEV__) {
               warn(`${key}: ${view
                 ? 'The found component do not support containPoint.'
                 : 'No view mapping to the found component.'}`);
             }
           }
         } else {
-          if (__DEV__) {
+          if (self.__DEV__) {
             warn(`${key}: containPoint is not supported`);
           }
         }
@@ -611,7 +665,7 @@ const ECharts = /** @class */ (function (_super) {
       defaultMainType: 'series'
     });
     var seriesModel = parsedFinder.seriesModel;
-    if (__DEV__) {
+    if (self.__DEV__) {
       if (!seriesModel) {
         warn('There is no specified series model');
       }
@@ -638,6 +692,18 @@ const ECharts = /** @class */ (function (_super) {
   ECharts.prototype.getViewOfSeriesModel = function (seriesModel) {
     return this._chartsMap[seriesModel.__viewId];
   };
+  ECharts.prototype.getSymbolForEvent = function (event) {
+    const pObject = event.pickedObject;
+    const { uid, type } = pObject.object.userData;
+    let view;
+    if (type === 'chart') {
+      view = this._chartsViews.find(item => item.uid === uid);
+      const symbol = view._symbolDraw._data.getItemGraphicEl(pObject.instanceId);
+      return symbol;
+    }
+    view = this._componentsViews.find(item => item.uid === uid);
+    return null;
+  };
   ECharts.prototype._initEvents = function () {
     var _this = this;
     each(MOUSE_EVENT_NAMES, (eveName) => {
@@ -650,19 +716,18 @@ const ECharts = /** @class */ (function (_super) {
         if (isGlobalOut) {
           params = {};
         } else {
-          el && findEventDispatcher(el, (parent) => {
+          const parent = this.getSymbolForEvent(e);
+          if (parent) {
             var ecData = getECData(parent);
             if (ecData && ecData.dataIndex != null) {
               var dataModel = ecData.dataModel || ecModel.getSeriesByIndex(ecData.seriesIndex);
               params = (dataModel && dataModel.getDataParams(ecData.dataIndex, ecData.dataType, el) || {});
-              return true;
             }
             // If element has custom eventData of components
             if (ecData.eventData) {
               params = extend({}, ecData.eventData);
-              return true;
             }
-          }, true);
+          }
         }
         // Contract: if params prepared in mouse event,
         // these properties must be specified:
@@ -688,7 +753,7 @@ const ECharts = /** @class */ (function (_super) {
           var model = componentType && componentIndex != null &&
             ecModel.getComponent(componentType, componentIndex);
           var view = model && _this[model.mainType === 'series' ? '_chartsMap' : '_componentsMap'][model.__viewId];
-          if (__DEV__) {
+          if (self.__DEV__) {
             // `event.componentType` and `event[componentTpype + 'Index']` must not
             // be missed, otherwise there is no way to distinguish source component.
             // See `dataFormat.getDataParams`.
@@ -713,7 +778,7 @@ const ECharts = /** @class */ (function (_super) {
       // which probably update any of the content and probably
       // cause problem if it is called previous other inner handlers.
       handler.zrEventfulCallAtLast = true;
-      // _this._zr.on(eveName, handler, _this);
+      _this.renderer.on(eveName, handler, _this);
     });
     each(eventActionMap, (actionType, eventType) => {
       _this._messageCenter.on(eventType, function (event) {
@@ -782,7 +847,7 @@ const ECharts = /** @class */ (function (_super) {
    */
   ECharts.prototype.resize = function (opts) {
     if (this[IN_MAIN_PROCESS_KEY]) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         error('`resize` should not be called during main process.');
       }
       return;
@@ -840,7 +905,7 @@ const ECharts = /** @class */ (function (_super) {
     name = name || 'default';
     this.hideLoading();
     if (!loadingEffects[name]) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         warn(`Loading effects ${name} not exists.`);
       }
       return;
@@ -899,7 +964,7 @@ const ECharts = /** @class */ (function (_super) {
     doDispatchAction.call(this, payload, silent);
     var flush = opt.flush;
     if (flush) {
-      // this._zr.flush();
+      this.renderer.flush();
     } else if (flush !== false && env.browser.weChat) {
       // In WeChat embedded browser, `requestAnimationFrame` and `setInterval`
       // hang when sliding page (on touch event), which cause that zr does not
@@ -926,7 +991,7 @@ const ECharts = /** @class */ (function (_super) {
     var seriesIndex = params.seriesIndex;
     var ecModel = this.getModel();
     var seriesModel = ecModel.getSeriesByIndex(seriesIndex);
-    if (__DEV__) {
+    if (self.__DEV__) {
       assert(params.data && seriesModel);
     }
     seriesModel.appendData(params);
@@ -955,22 +1020,21 @@ const ECharts = /** @class */ (function (_super) {
      * Prepare view instances of charts and components
      */
     prepareView = function (ecIns, isComponent) {
-      var ecModel = ecIns._model;
-      var scheduler = ecIns._scheduler;
-      var viewList = isComponent ? ecIns._componentsViews : ecIns._chartsViews;
-      var viewMap = isComponent ? ecIns._componentsMap : ecIns._chartsMap;
-      var zr = ecIns._zr;
-      var api = ecIns._api;
-      for (var i = 0; i < viewList.length; i++) {
+      const ecModel = ecIns._model;
+      const scheduler = ecIns._scheduler;
+      const viewList = isComponent ? ecIns._componentsViews : ecIns._chartsViews;
+      const viewMap = isComponent ? ecIns._componentsMap : ecIns._chartsMap;
+      const scene = isComponent ? ecIns.scene.componentScene : ecIns.scene.chartScene;
+      const api = ecIns._api;
+      for (let i = 0; i < viewList.length; i++) {
         viewList[i].__alive = false;
       }
-      return;
+
       isComponent
         ? ecModel.eachComponent((componentType, model) => {
           componentType !== 'series' && doPrepare(model);
         })
         : ecModel.eachSeries(doPrepare);
-
       function doPrepare(model) {
         // By default view will be reused if possible for the case that `setOption` with "notMerge"
         // mode and need to enable transition animation. (Usually, when they have the same id, or
@@ -984,6 +1048,27 @@ const ECharts = /** @class */ (function (_super) {
         // Consider: id same and type changed.
         var viewId = `_ec_${model.id}_${model.type}`;
         var view = !requireNewView && viewMap[viewId];
+        if (!view) {
+          var classType = parseClassType(model.type);
+          var Clazz = isComponent
+            ? ComponentView.getClass(classType.main, classType.sub)
+            : (
+              // FIXME:TS
+              // (ChartView as ChartViewConstructor).getClass('series', classType.sub)
+              // For backward compat, still support a chart type declared as only subType
+              // like "liquidfill", but recommend "series.liquidfill"
+              // But need a base class to make a type series.
+              ChartView.getClass(classType.sub));
+          if (!Clazz) return;
+          if (self.__DEV__) {
+            assert(Clazz, `${classType.sub} does not exist.`);
+          }
+          view = new Clazz();
+          view.init(ecModel, api);
+          viewMap[viewId] = view;
+          viewList.push(view);
+          scene.add(view.group);
+        }
         model.__viewId = view.__id = viewId;
         view.__alive = true;
         view.__model = model;
@@ -991,11 +1076,14 @@ const ECharts = /** @class */ (function (_super) {
           mainType: model.mainType,
           index: model.componentIndex
         };
+        !isComponent && scheduler.prepareView(view, model, ecModel, api);
       }
-
-      for (var i = 0; i < viewList.length;) {
+      for (let i = 0; i < viewList.length;) {
         var view = viewList[i];
         if (!view.__alive) {
+          !isComponent && view.renderTask.dispose();
+          scene.remove(view.group);
+          view.dispose(ecModel, api);
           viewList.splice(i, 1);
           if (viewMap[view.__id] === view) {
             delete viewMap[view.__id];
@@ -1006,6 +1094,7 @@ const ECharts = /** @class */ (function (_super) {
         }
       }
     };
+
     updateDirectly = function (ecIns, method, payload, mainType, subType) {
       var ecModel = ecIns._model;
       ecModel.setUpdatePayload(payload);
@@ -1099,11 +1188,9 @@ const ECharts = /** @class */ (function (_super) {
         });
       },
       update(payload, updateParams) {
-        return;
-
+        console.time('before-render');
         var ecModel = this._model;
         var api = this._api;
-        // var zr = this._zr;
         var coordSysMgr = this._coordSysMgr;
         var scheduler = this._scheduler;
         // update before setOption
@@ -1131,10 +1218,16 @@ const ECharts = /** @class */ (function (_super) {
         coordSysMgr.update(ecModel, api);
         clearColorPalette(ecModel);
         scheduler.performVisualTasks(ecModel, payload);
+
+        console.timeEnd('before-render');
+
+        console.time('render');
         render(this, ecModel, api, payload, updateParams);
+        console.timeEnd('render');
+
         // Set background
-        var backgroundColor = ecModel.get('backgroundColor') || 'transparent';
-        var darkMode = ecModel.get('darkMode');
+        // var backgroundColor = ecModel.get('backgroundColor') || 'transparent';
+        // var darkMode = ecModel.get('darkMode');
         // zr.setBackgroundColor(backgroundColor);
         // // Force set dark mode.
         // if (darkMode != null && darkMode !== 'auto') {
@@ -1244,14 +1337,14 @@ const ECharts = /** @class */ (function (_super) {
       var coordSysList = ecIns._coordSysMgr.getCoordinateSystems();
       var result;
       var parsedFinder = modelUtil.parseFinder(ecModel, finder);
-      for (var i = 0; i < coordSysList.length; i++) {
+      for (let i = 0; i < coordSysList.length; i++) {
         var coordSys = coordSysList[i];
         if (coordSys[methodName] &&
           (result = coordSys[methodName](ecModel, parsedFinder, value)) != null) {
           return result;
         }
       }
-      if (__DEV__) {
+      if (self.__DEV__) {
         warn(`No coordinate system that supports ${methodName} found by the given finder.`);
       }
     };
@@ -1528,6 +1621,8 @@ const ECharts = /** @class */ (function (_super) {
       // TODO progressive?
       lifecycle.trigger('series:beforeupdate', ecModel, api, updateParams);
       var unfinished = false;
+
+      console.time('eachSeries-render');
       ecModel.eachSeries((seriesModel) => {
         var chartView = ecIns._chartsMap[seriesModel.__viewId];
         chartView.__alive = true;
@@ -1538,9 +1633,12 @@ const ECharts = /** @class */ (function (_super) {
         if (dirtyMap && dirtyMap.get(seriesModel.uid)) {
           renderTask.dirty();
         }
+        console.time(`${seriesModel.__viewId}---perform`);
         if (renderTask.perform(scheduler.getPerformArgs(renderTask))) {
           unfinished = true;
         }
+        console.timeEnd(`${seriesModel.__viewId}---perform`);
+
         chartView.group.silent = !!seriesModel.get('silent');
         // Should not call markRedraw on group, because it will disable zrender
         // incremental render (always render from the __startIndex each frame)
@@ -1548,6 +1646,9 @@ const ECharts = /** @class */ (function (_super) {
         updateBlend(seriesModel, chartView);
         updateSeriesElementSelection(seriesModel);
       });
+      console.timeEnd('eachSeries-render');
+
+
       scheduler.unfinished = unfinished || scheduler.unfinished;
       lifecycle.trigger('series:layoutlabels', ecModel, api, updateParams);
       // transition after label is layouted.
@@ -1561,7 +1662,7 @@ const ECharts = /** @class */ (function (_super) {
         updateStates(seriesModel, chartView);
       });
       // If use hover layer
-      updateHoverLayerStatus(ecIns, ecModel);
+      // updateHoverLayerStatus(ecIns, ecModel);
       lifecycle.trigger('series:afterupdate', ecModel, api, updateParams);
     };
     markStatusToUpdate = function (ecIns) {
@@ -1573,13 +1674,13 @@ const ECharts = /** @class */ (function (_super) {
       if (!ecIns[STATUS_NEEDS_UPDATE_KEY]) {
         return;
       }
-      ecIns.getZr().storage.traverse((el) => {
-        // Not applied on removed elements, it may still in fading.
-        if (graphic.isElementRemoved(el)) {
-          return;
-        }
-        applyElementStates(el);
-      });
+      // ecIns.getZr().storage.traverse((el) => {
+      //   // Not applied on removed elements, it may still in fading.
+      //   if (graphic.isElementRemoved(el)) {
+      //     return;
+      //   }
+      //   applyElementStates(el);
+      // });
       ecIns[STATUS_NEEDS_UPDATE_KEY] = false;
     };
 
@@ -1587,7 +1688,7 @@ const ECharts = /** @class */ (function (_super) {
       var newStates = [];
       var oldStates = el.currentStates;
       // Keep other states.
-      for (var i = 0; i < oldStates.length; i++) {
+      for (let i = 0; i < oldStates.length; i++) {
         var stateName = oldStates[i];
         if (!(stateName === 'emphasis' || stateName === 'blur' || stateName === 'select')) {
           newStates.push(stateName);
@@ -1663,6 +1764,7 @@ const ECharts = /** @class */ (function (_super) {
 
 
     function doUpdateZ(el, z, zlevel, maxZ2) {
+      return;
       // Group may also have textContent
       var label = el.getTextContent();
       var labelLine = el.getTextGuideLine();
@@ -1670,7 +1772,7 @@ const ECharts = /** @class */ (function (_super) {
       if (isGroup) {
         // set z & zlevel of children elements of Group
         var children = el.childrenRef();
-        for (var i = 0; i < children.length; i++) {
+        for (let i = 0; i < children.length; i++) {
           maxZ2 = Math.max(doUpdateZ(children[i], z, zlevel, maxZ2), maxZ2);
         }
       } else {
@@ -1727,6 +1829,7 @@ const ECharts = /** @class */ (function (_super) {
     }
 
     function updateStates(model, view) {
+      return;
       var stateAnimationModel = model.getModel('stateAnimation');
       var enableAnimation = model.isAnimationEnabled();
       var duration = stateAnimationModel.get('duration');
@@ -1833,7 +1936,7 @@ const ECharts = /** @class */ (function (_super) {
     };
     enableConnect = function (chart) {
       function updateConnectedChartsStatus(charts, status) {
-        for (var i = 0; i < charts.length; i++) {
+        for (let i = 0; i < charts.length; i++) {
           var otherChart = charts[i];
           otherChart[CONNECT_STATUS_KEY] = status;
         }
@@ -1879,7 +1982,8 @@ echartsProto.one = function (eventName, cb, ctx) {
 
   function wrapped() {
     var args2 = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
+    for (let _i = 0; _i < arguments.length; _i++) {
+      // eslint-disable-next-line prefer-rest-params
       args2[_i] = arguments[_i];
     }
     cb && cb.apply && cb.apply(this, args2);
@@ -1896,7 +2000,8 @@ const MOUSE_EVENT_NAMES = [
 ];
 
 function disposedWarning(id) {
-  if (__DEV__) {
+  // eslint-disable-next-line no-undef
+  if (self.__DEV__) {
     warn(`Instance ${id} has been disposed`);
   }
 }
@@ -1913,8 +2018,8 @@ const themeStorage = {};
 const loadingEffects = {};
 const instances = {};
 const connectedGroups = {};
-const idBase = +(new Date()) - 0;
-const groupIdBase = +(new Date()) - 0;
+let idBase = +(new Date()) - 0;
+let groupIdBase = +(new Date()) - 0;
 const DOM_ATTRIBUTE_KEY = '_echarts_instance_';
 
 /**
@@ -1930,19 +2035,22 @@ const DOM_ATTRIBUTE_KEY = '_echarts_instance_';
 export function init(dom, theme, opts) {
   var isClient = !(opts && opts.ssr);
   if (isClient) {
-    if (__DEV__) {
+    // eslint-disable-next-line no-undef
+    if (self.__DEV__) {
       if (!dom) {
         throw new Error('Initialize failed: invalid dom.');
       }
     }
     var existInstance = getInstanceByDom(dom);
     if (existInstance) {
-      if (__DEV__) {
+      // eslint-disable-next-line no-undef
+      if (self.__DEV__) {
         warn('There is a chart instance already initialized on the dom.');
       }
       return existInstance;
     }
-    if (__DEV__) {
+    // eslint-disable-next-line no-undef
+    if (self.__DEV__) {
       if (isDom(dom) &&
         dom.nodeName.toUpperCase() !== 'CANVAS' &&
         ((!dom.clientWidth && (!opts || opts.width == null)) ||
@@ -2116,7 +2224,8 @@ function normalizeRegister(targetList, priority, fn, defaultPriority, visualType
     fn = priority;
     priority = defaultPriority;
   }
-  if (__DEV__) {
+  // eslint-disable-next-line no-undef
+  if (self.__DEV__) {
     if (isNaN(priority) || priority == null) {
       throw new Error('Illegal priority');
     }
@@ -2157,12 +2266,13 @@ export function registerLoading(name, loadingFx) {
  *     });
  */
 export function setCanvasCreator(creator) {
-  if (__DEV__) {
+  // eslint-disable-next-line no-undef
+  if (self.__DEV__) {
     deprecateLog('setCanvasCreator is deprecated. Use setPlatformAPI({ createCanvas }) instead.');
   }
-  setPlatformAPI({
-    createCanvas: creator
-  });
+  // setPlatformAPI({
+  //   createCanvas: creator
+  // });
 }
 
 /**

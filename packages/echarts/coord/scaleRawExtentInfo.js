@@ -70,7 +70,7 @@ const ScaleRawExtentInfo = /** @class */ (function () {
       var boundaryGapArr = isArray(boundaryGap)
         ? boundaryGap : [boundaryGap || 0, boundaryGap || 0];
       if (typeof boundaryGapArr[0] === 'boolean' || typeof boundaryGapArr[1] === 'boolean') {
-        if (__DEV__) {
+        if (self.__DEV__) {
           console.warn('Boolean type for boundaryGap is only ' +
             'allowed for ordinal axis. Please use string in ' +
             'percentage instead, e.g., "20%". Currently, ' +
@@ -169,14 +169,14 @@ const ScaleRawExtentInfo = /** @class */ (function () {
     };
   };
   ScaleRawExtentInfo.prototype.modifyDataMinMax = function (minMaxName, val) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       assert(!this.frozen);
     }
     this[DATA_MIN_MAX_ATTR[minMaxName]] = val;
   };
   ScaleRawExtentInfo.prototype.setDeterminedMinMax = function (minMaxName, val) {
     var attr = DETERMINED_MIN_MAX_ATTR[minMaxName];
-    if (__DEV__) {
+    if (self.__DEV__) {
       assert(!this.frozen &&
         // Earse them usually means logic flaw.
         (this[attr] == null));

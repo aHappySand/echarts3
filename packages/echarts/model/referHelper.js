@@ -71,7 +71,7 @@ const fetchers = {
   cartesian2d(seriesModel, result, axisMap, categoryAxisMap) {
     var xAxisModel = seriesModel.getReferringComponents('xAxis', SINGLE_REFERRING).models[0];
     var yAxisModel = seriesModel.getReferringComponents('yAxis', SINGLE_REFERRING).models[0];
-    if (__DEV__) {
+    if (self.__DEV__) {
       if (!xAxisModel) {
         throw new Error(`xAxis "${retrieve(seriesModel.get('xAxisIndex'), seriesModel.get('xAxisId'), 0)}" not found`);
       }
@@ -93,7 +93,7 @@ const fetchers = {
   },
   singleAxis(seriesModel, result, axisMap, categoryAxisMap) {
     var singleAxisModel = seriesModel.getReferringComponents('singleAxis', SINGLE_REFERRING).models[0];
-    if (__DEV__) {
+    if (self.__DEV__) {
       if (!singleAxisModel) {
         throw new Error('singleAxis should be specified.');
       }
@@ -109,7 +109,7 @@ const fetchers = {
     var polarModel = seriesModel.getReferringComponents('polar', SINGLE_REFERRING).models[0];
     var radiusAxisModel = polarModel.findAxisModel('radiusAxis');
     var angleAxisModel = polarModel.findAxisModel('angleAxis');
-    if (__DEV__) {
+    if (self.__DEV__) {
       if (!angleAxisModel) {
         throw new Error('angleAxis option not found');
       }

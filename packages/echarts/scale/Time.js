@@ -396,15 +396,15 @@ function getIntervalTicks(bottomUnitName, approxInterval, isUTC, extent) {
         value: extent[1]
       }];
     }
-    for (var i = 0; i < lastLevelTicks.length - 1; i++) {
+    for (let i = 0; i < lastLevelTicks.length - 1; i++) {
       var startTick = lastLevelTicks[i].value;
       var endTick = lastLevelTicks[i + 1].value;
       if (startTick === endTick) {
         continue;
       }
-      var interval = void 0;
-      var getterName = void 0;
-      var setterName = void 0;
+      var interval;
+      var getterName;
+      var setterName;
       var isDate = false;
       switch (unitName) {
         case 'year':
@@ -458,7 +458,7 @@ function getIntervalTicks(bottomUnitName, approxInterval, isUTC, extent) {
         });
       }
     }
-    for (var i = 0; i < newAddedTicks.length; i++) {
+    for (let i = 0; i < newAddedTicks.length; i++) {
       levelTicks.push(newAddedTicks[i]);
     }
     // newAddedTicks.length && console.log(unitName, newAddedTicks);
@@ -469,7 +469,7 @@ function getIntervalTicks(bottomUnitName, approxInterval, isUTC, extent) {
   var currentLevelTicks = [];
   var tickCount = 0;
   var lastLevelTickCount = 0;
-  for (var i = 0; i < unitNames.length && iter++ < safeLimit; ++i) {
+  for (let i = 0; i < unitNames.length && iter++ < safeLimit; ++i) {
     var primaryTimeUnit = getPrimaryTimeUnit(unitNames[i]);
     if (!isPrimaryTimeUnit(unitNames[i])) { // TODO
       continue;
@@ -482,7 +482,7 @@ function getIntervalTicks(bottomUnitName, approxInterval, isUTC, extent) {
         // Remove the duplicate so the tick count can be precisely.
         currentLevelTicks.sort((a, b) => a.value - b.value);
         var levelTicksRemoveDuplicated = [];
-        for (var i_1 = 0; i_1 < currentLevelTicks.length; ++i_1) {
+        for (let i_1 = 0; i_1 < currentLevelTicks.length; ++i_1) {
           var tickValue = currentLevelTicks[i_1].value;
           if (i_1 === 0 || currentLevelTicks[i_1 - 1].value !== tickValue) {
             levelTicksRemoveDuplicated.push(currentLevelTicks[i_1]);
@@ -506,7 +506,7 @@ function getIntervalTicks(bottomUnitName, approxInterval, isUTC, extent) {
       currentLevelTicks = [];
     }
   }
-  if (__DEV__) {
+  if (self.__DEV__) {
     if (iter >= safeLimit) {
       warn('Exceed safe limit.');
     }
@@ -514,9 +514,9 @@ function getIntervalTicks(bottomUnitName, approxInterval, isUTC, extent) {
   var levelsTicksInExtent = filter(map(levelsTicks, (levelTicks) => filter(levelTicks, (tick) => tick.value >= extent[0] && tick.value <= extent[1] && !tick.notAdd)), (levelTicks) => levelTicks.length > 0);
   var ticks = [];
   var maxLevel = levelsTicksInExtent.length - 1;
-  for (var i = 0; i < levelsTicksInExtent.length; ++i) {
+  for (let i = 0; i < levelsTicksInExtent.length; ++i) {
     var levelTicks = levelsTicksInExtent[i];
-    for (var k = 0; k < levelTicks.length; ++k) {
+    for (let k = 0; k < levelTicks.length; ++k) {
       ticks.push({
         value: levelTicks[k].value,
         level: maxLevel - i
@@ -526,7 +526,7 @@ function getIntervalTicks(bottomUnitName, approxInterval, isUTC, extent) {
   ticks.sort((a, b) => a.value - b.value);
   // Remove duplicates
   var result = [];
-  for (var i = 0; i < ticks.length; ++i) {
+  for (let i = 0; i < ticks.length; ++i) {
     if (i === 0 || ticks[i].value !== ticks[i - 1].value) {
       result.push(ticks[i]);
     }

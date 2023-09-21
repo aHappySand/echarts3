@@ -111,7 +111,7 @@ const OrdinalScale = /** @class */ (function (_super) {
     // Unnecessary support negative tick in `realtimeSort`.
     var tickNum = 0;
     var allCategoryLen = this._ordinalMeta.categories.length;
-    for (var len = Math.min(allCategoryLen, infoOrdinalNumbers.length); tickNum < len; ++tickNum) {
+    for (let len = Math.min(allCategoryLen, infoOrdinalNumbers.length); tickNum < len; ++tickNum) {
       var ordinalNumber = infoOrdinalNumbers[tickNum];
       ordinalsByTick[tickNum] = ordinalNumber;
       ticksByOrdinal[ordinalNumber] = tickNum;

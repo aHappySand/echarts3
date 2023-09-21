@@ -25,7 +25,7 @@ const Eventful = (function () {
     if (!_h[event]) {
       _h[event] = [];
     }
-    for (var i = 0; i < _h[event].length; i++) {
+    for (let i = 0; i < _h[event].length; i++) {
       if (_h[event][i].h === handler) {
         return this;
       }
@@ -59,7 +59,7 @@ const Eventful = (function () {
     if (handler) {
       if (_h[eventType]) {
         var newList = [];
-        for (var i = 0, l = _h[eventType].length; i < l; i++) {
+        for (let i = 0, l = _h[eventType].length; i < l; i++) {
           if (_h[eventType][i].h !== handler) {
             newList.push(_h[eventType][i]);
           }
@@ -76,7 +76,8 @@ const Eventful = (function () {
   };
   Eventful.prototype.trigger = function (eventType) {
     var args = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
+    for (let _i = 1; _i < arguments.length; _i++) {
+      // eslint-disable-next-line prefer-rest-params
       args[_i - 1] = arguments[_i];
     }
     if (!this._$handlers) {
@@ -87,7 +88,7 @@ const Eventful = (function () {
     if (_h) {
       var argLen = args.length;
       var len = _h.length;
-      for (var i = 0; i < len; i++) {
+      for (let i = 0; i < len; i++) {
         var hItem = _h[i];
         if (eventProcessor &&
           eventProcessor.filter &&
@@ -117,7 +118,7 @@ const Eventful = (function () {
   };
   Eventful.prototype.triggerWithContext = function (type) {
     var args = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
+    for (let _i = 1; _i < arguments.length; _i++) {
       args[_i - 1] = arguments[_i];
     }
     if (!this._$handlers) {
@@ -129,7 +130,7 @@ const Eventful = (function () {
       var argLen = args.length;
       var ctx = args[argLen - 1];
       var len = _h.length;
-      for (var i = 0; i < len; i++) {
+      for (let i = 0; i < len; i++) {
         var hItem = _h[i];
         if (eventProcessor &&
           eventProcessor.filter &&

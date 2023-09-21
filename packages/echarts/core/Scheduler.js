@@ -97,6 +97,7 @@ const Scheduler = /** @class */ (function () {
    * `updateStreamModes` use `seriesModel.getData()`.
    */
   Scheduler.prototype.updateStreamModes = function (seriesModel, view) {
+    if (!view) return;
     var pipeline = this._pipelineMap.get(seriesModel.uid);
     var data = seriesModel.getData();
     var dataLen = data.count();
@@ -145,7 +146,7 @@ const Scheduler = /** @class */ (function () {
     each(this._allHandlers, function (handler) {
       var record = stageTaskMap.get(handler.uid) || stageTaskMap.set(handler.uid, {});
       var errMsg = '';
-      if (__DEV__) {
+      if (self.__DEV__) {
         // Currently do not need to support to sepecify them both.
         errMsg = '"reset" and "overallReset" must not be both specified.';
       }
@@ -325,7 +326,7 @@ const Scheduler = /** @class */ (function () {
     // progress. Moreover, to avoid call the overall task each frame (too frequent),
     // we set the pipeline block.
     var errMsg = '';
-    if (__DEV__) {
+    if (self.__DEV__) {
       errMsg = '"createOnAllSeries" is not supported for "overallReset", ' +
         'because it will block all streams.';
     }
@@ -429,7 +430,7 @@ function makeSeriesTaskProgress(resetDefineIdx) {
     var data = context.data;
     var resetDefine = context.resetDefines[resetDefineIdx];
     if (resetDefine && resetDefine.dataEach) {
-      for (var i = params.start; i < params.end; i++) {
+      for (let i = params.start; i < params.end; i++) {
         resetDefine.dataEach(data, i);
       }
     } else if (resetDefine && resetDefine.progress) {
@@ -455,13 +456,14 @@ function detectSeriseType(legacyFunc) {
     // Assume there is no async when calling `eachSeriesByType`.
     legacyFunc(ecModelMock, apiMock);
   } catch (e) {
+    console.log(e);
   }
   return seriesType;
 }
 
 const ecModelMock = {};
 const apiMock = {};
-const seriesType;
+let seriesType;
 mockMethods(ecModelMock, GlobalModel);
 mockMethods(apiMock, ExtensionAPI);
 ecModelMock.eachSeriesByType = ecModelMock.eachRawSeriesByType = function (type) {
@@ -475,7 +477,7 @@ ecModelMock.eachComponent = function (cond) {
 
 function mockMethods(target, Clz) {
   /* eslint-disable */
-  for (var name_1 in Clz.prototype) {
+  for (let name_1 in Clz.prototype) {
     // Do not use hasOwnProperty
     target[name_1] = noop;
   }

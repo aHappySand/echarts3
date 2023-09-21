@@ -103,7 +103,7 @@ export function alignScaleTicks(scale, axisModel, alignToScale) {
   if (t0 || t1) {
     intervalScaleProto.setNiceExtent.call(scale, min + interval, max - interval);
   }
-  if (__DEV__) {
+  if (self.__DEV__) {
     var ticks = intervalScaleProto.getTicks.call(scale);
     if (ticks[1] &&
       (!isValueNice(interval) || getPrecisionSafe(ticks[1].value) > getPrecisionSafe(interval))) {

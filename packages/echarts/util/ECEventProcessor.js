@@ -59,7 +59,7 @@ const ECEventProcessor = /** @class */ (function () {
       var dataKeys_1 = { name: 1, dataIndex: 1, dataType: 1 };
       zrUtil.each(query, (val, key) => {
         var reserved = false;
-        for (var i = 0; i < suffixes_1.length; i++) {
+        for (let i = 0; i < suffixes_1.length; i++) {
           var propSuffix = suffixes_1[i];
           var suffixPos = key.lastIndexOf(propSuffix);
           if (suffixPos > 0 && suffixPos === key.length - propSuffix.length) {

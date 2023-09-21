@@ -49,7 +49,7 @@ export function throttle(fn, delay, debounce) {
 
   var cb = function () {
     var cbArgs = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
+    for (let _i = 0; _i < arguments.length; _i++) {
       cbArgs[_i] = arguments[_i];
     }
     currCall = (new Date()).getTime();

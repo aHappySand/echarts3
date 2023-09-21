@@ -16,6 +16,20 @@
 * specific language governing permissions and limitations
 * under the License.
 */
+import * as THREE from 'three';
+import ZRGroup from '../../zrender/graphic/Group';
+import Group3D from '../../zrender/graphic/Group3D';
+import ZRText from '../../zrender/graphic/Text';
+import ZRLine from '../../zrender/graphic/Line';
+import ZRPath from '../../zrender/graphic/Path';
+import ZRRect from '../../zrender/graphic/shape/Rect';
+import ZRCircle from '../../zrender/graphic/shape/Circle';
+import BoundingRect from '../../zrender/core/BoundingRect';
+import OrientedBoundingRect from '../../zrender/core/OrientedBoundingRect';
+
+import * as subPixelOptimizeUtil from '../../zrender/graphic/helper/subPixelOptimize';
+import { defaults, each, hasOwn, isString, keys, isArray } from '../../zrender/core/util';
+import { getECData } from './innerStore';
 
 /**
  * @deprecated export for compatitable reason
@@ -120,3 +134,112 @@ export function resizePath(path, rect) {
   var m = pathRect.calculateTransform(rect);
   path.applyTransform(m);
 }
+
+
+/**
+ * Sub pixel optimize line for canvas
+ */
+export function subPixelOptimizeLine(shape, lineWidth) {
+  subPixelOptimizeUtil.subPixelOptimizeLine(shape, shape, { lineWidth });
+  return shape;
+}
+/**
+ * Sub pixel optimize rect for canvas
+ */
+export function subPixelOptimizeRect(param) {
+  subPixelOptimizeUtil.subPixelOptimizeRect(param.shape, param.shape, param.style);
+  return param;
+}
+/**
+ * Sub pixel optimize for canvas
+ *
+ * @param position Coordinate, such as x, y
+ * @param lineWidth Should be nonnegative integer.
+ * @param positiveOrNegative Default false (negative).
+ * @return Optimized position.
+ */
+export const subPixelOptimize = subPixelOptimizeUtil.subPixelOptimize;
+
+
+export function setTooltipConfig(opt) {
+  var itemTooltipOption = opt.itemTooltipOption;
+  var componentModel = opt.componentModel;
+  var itemName = opt.itemName;
+  var itemTooltipOptionObj = isString(itemTooltipOption)
+    ? { formatter: itemTooltipOption }
+    : itemTooltipOption;
+  var mainType = componentModel.mainType;
+  var componentIndex = componentModel.componentIndex;
+  var formatterParams = {
+    componentType: mainType,
+    name: itemName,
+    $vars: ['name']
+  };
+  formatterParams[`${mainType}Index`] = componentIndex;
+  var formatterParamsExtra = opt.formatterParamsExtra;
+  if (formatterParamsExtra) {
+    each(keys(formatterParamsExtra), (key) => {
+      if (!hasOwn(formatterParams, key)) {
+        formatterParams[key] = formatterParamsExtra[key];
+        formatterParams.$vars.push(key);
+      }
+    });
+  }
+  var ecData = getECData(opt.el);
+  ecData.componentMainType = mainType;
+  ecData.componentIndex = componentIndex;
+  ecData.tooltipConfig = {
+    name: itemName,
+    option: defaults({
+      content: itemName,
+      formatterParams
+    }, itemTooltipOptionObj)
+  };
+}
+function traverseElement(el, cb) {
+  var stopped;
+  // TODO
+  // Polyfill for fixing zrender group traverse don't visit it's root issue.
+  if (el.isGroup) {
+    stopped = cb(el);
+  }
+  if (!stopped) {
+    el.traverse(cb);
+  }
+}
+export function traverseElements(els, cb) {
+  if (els) {
+    if (isArray(els)) {
+      for (var i = 0; i < els.length; i++) {
+        traverseElement(els[i], cb);
+      }
+    }
+    else {
+      traverseElement(els, cb);
+    }
+  }
+}
+
+
+export const updateMatrix = (function () {
+  const position = new THREE.Vector3();
+  const quaternion = new THREE.Quaternion();
+  const scale = new THREE.Vector3();
+  const matrix = new THREE.Matrix4();
+  return function (x, y, z, scaleX, scaleY, scaleZ = 1) {
+    position.x = x;
+    position.y = y;
+    position.z = z;
+
+    scale.x = scaleX;
+    scale.y = scaleY;
+    scale.z = scaleZ;
+
+    matrix.compose(position, quaternion, scale);
+    return matrix;
+  };
+}());
+
+export const emptyMatrix = new THREE.Matrix4();
+
+export { ZRGroup, ZRText, BoundingRect, OrientedBoundingRect, ZRLine, Group3D, ZRPath, ZRRect, ZRCircle };

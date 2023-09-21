@@ -19,6 +19,8 @@
 import Model from '../model/Model';
 import env from '../../zrender/core/env';
 // default import ZH and EN lang
+import langEN from '../i18n/langEN';
+import langZH from '../i18n/langZH';
 import { isString, clone, merge } from '../../zrender/core/util';
 
 const LOCALE_ZH = 'ZH';
@@ -29,7 +31,7 @@ const localeModels = {};
 export const SYSTEM_LANG = !env.domSupported ? DEFAULT_LOCALE : (function () {
   var langStr = (
     /* eslint-disable-next-line */
-    document.documentElement.lang || navigator.language || navigator.browserLanguage).toUpperCase();
+    (document && document.documentElement.lang) || navigator && (navigator.language || navigator.browserLanguage)).toUpperCase();
   return langStr.indexOf(LOCALE_ZH) > -1 ? LOCALE_ZH : DEFAULT_LOCALE;
 }());
 
@@ -60,3 +62,6 @@ export function getLocaleModel(lang) {
 export function getDefaultLocaleModel() {
   return localeModels[DEFAULT_LOCALE];
 }
+// Default locale
+registerLocale(LOCALE_EN, langEN);
+registerLocale(LOCALE_ZH, langZH);

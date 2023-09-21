@@ -18,7 +18,7 @@ function diff(oldArr, newArr, equals) {
     var indices = [];
     var allCleared = !newLen && oldLen > 0;
     var allCreated = !oldLen && newLen > 0;
-    for (var i = 0; i < (allCleared ? oldArr : newArr).length; i++) {
+    for (let i = 0; i < (allCleared ? oldArr : newArr).length; i++) {
       indices.push(i);
     }
     return [{
@@ -30,7 +30,7 @@ function diff(oldArr, newArr, equals) {
   }
 
   function execEditLength() {
-    for (var diagonalPath = -1 * editLength; diagonalPath <= editLength; diagonalPath += 2) {
+    for (let diagonalPath = -1 * editLength; diagonalPath <= editLength; diagonalPath += 2) {
       var basePath;
       var addPath = bestPath[diagonalPath - 1];
       var removePath = bestPath[diagonalPath + 1];
@@ -120,7 +120,7 @@ function buildValues(components) {
     var component = components[componentPos];
     if (!component.removed) {
       var indices = [];
-      for (var i = newPos; i < newPos + component.count; i++) {
+      for (let i = newPos; i < newPos + component.count; i++) {
         indices.push(i);
       }
       component.indices = indices;
@@ -129,7 +129,7 @@ function buildValues(components) {
         oldPos += component.count;
       }
     } else {
-      for (var i = oldPos; i < oldPos + component.count; i++) {
+      for (let i = oldPos; i < oldPos + component.count; i++) {
         component.indices.push(i);
       }
       oldPos += component.count;

@@ -24,7 +24,7 @@ const GestureMgr = (function () {
       target,
       event
     };
-    for (var i = 0, len = touches.length; i < len; i++) {
+    for (let i = 0, len = touches.length; i < len; i++) {
       var touch = touches[i];
       var pos = eventUtil.clientToLocal(root, touch, {});
       trackItem.points.push([pos.zrX, pos.zrY]);
@@ -33,7 +33,7 @@ const GestureMgr = (function () {
     this._track.push(trackItem);
   };
   GestureMgr.prototype._recognize = function (event) {
-    for (var eventName in recognizers) {
+    for (let eventName in recognizers) {
       if (recognizers.hasOwnProperty(eventName)) {
         var gestureInfo = recognizers[eventName](this._track, event);
         if (gestureInfo) {

@@ -1,47 +1,51 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one
-* or more contributor license agreements.  See the NOTICE file
-* distributed with this work for additional information
-* regarding copyright ownership.  The ASF licenses this file
-* to you under the Apache License, Version 2.0 (the
-* "License"); you may not use this file except in compliance
-* with the License.  You may obtain a copy of the License at
-*
-*   http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+import Group3D from '../../zrender/graphic/Group3D';
+
 import { each } from '../../zrender/core/util';
-import Group from '../../zrender/graphic/Group';
+// import Group from 'zrender/src/graphic/Group';
 import * as componentUtil from '../util/component';
 import * as clazzUtil from '../util/clazz';
 import * as modelUtil from '../util/model';
 import { enterEmphasis, leaveEmphasis, getHighlightDigit, isHighDownDispatcher } from '../util/states';
 import { createTask } from '../core/task';
-import { traverseElements } from '../util/graphic';
+import createRenderPlanner from '../chart/helper/createRenderPlanner';
+// import { traverseElements } from '../util/graphic';
 import { error } from '../util/log';
 
-const inner = modelUtil.makeInner();
+var inner = modelUtil.makeInner();
+var renderPlanner = createRenderPlanner();
 const ChartView = /** @class */ (function () {
   function ChartView() {
-    this.group = new Group();
+    this.group = new Group3D();
     this.uid = componentUtil.getUID('viewChart');
     this.renderTask = createTask({
-      plan: null,
+      plan: renderTaskPlan,
       reset: renderTaskReset
     });
     this.renderTask.context = { view: this };
   }
-
-  ChartView.prototype.init = function (ecModel, api) {
-  };
+  // eslint-disable-next-line no-unused-vars
+  ChartView.prototype.init = function (ecModel, api) { };
+  // eslint-disable-next-line no-unused-vars
   ChartView.prototype.render = function (seriesModel, ecModel, api, payload) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       throw new Error('render method must been implemented');
     }
   };
@@ -51,7 +55,7 @@ const ChartView = /** @class */ (function () {
   ChartView.prototype.highlight = function (seriesModel, ecModel, api, payload) {
     var data = seriesModel.getData(payload && payload.dataType);
     if (!data) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         error(`Unknown dataType ${payload.dataType}`);
       }
       return;
@@ -64,7 +68,7 @@ const ChartView = /** @class */ (function () {
   ChartView.prototype.downplay = function (seriesModel, ecModel, api, payload) {
     var data = seriesModel.getData(payload && payload.dataType);
     if (!data) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         error(`Unknown dataType ${payload.dataType}`);
       }
       return;
@@ -74,14 +78,15 @@ const ChartView = /** @class */ (function () {
   /**
    * Remove self.
    */
+  // eslint-disable-next-line no-unused-vars
   ChartView.prototype.remove = function (ecModel, api) {
     this.group.removeAll();
   };
   /**
    * Dispose self.
    */
-  ChartView.prototype.dispose = function (ecModel, api) {
-  };
+  // eslint-disable-next-line no-unused-vars
+  ChartView.prototype.dispose = function (ecModel, api) { };
   ChartView.prototype.updateView = function (seriesModel, ecModel, api, payload) {
     this.render(seriesModel, ecModel, api, payload);
   };
@@ -100,7 +105,7 @@ const ChartView = /** @class */ (function () {
    * And traverse all in normal rendering.
    */
   ChartView.prototype.eachRendered = function (cb) {
-    traverseElements(this.group, cb);
+    // traverseElements(this.group, cb);
   };
   ChartView.markUpdateMethod = function (payload, methodName) {
     inner(payload).updateMethod = methodName;
@@ -112,7 +117,6 @@ const ChartView = /** @class */ (function () {
   return ChartView;
 }());
 
-
 /**
  * Set state of single element
  */
@@ -121,7 +125,6 @@ function elSetState(el, state, highlightDigit) {
     (state === 'emphasis' ? enterEmphasis : leaveEmphasis)(el, highlightDigit);
   }
 }
-
 function toggleHighlight(data, payload, state) {
   var dataIndex = modelUtil.queryDataIndex(data, payload);
   var highlightDigit = (payload && payload.highlightKey != null)
@@ -137,10 +140,11 @@ function toggleHighlight(data, payload, state) {
     });
   }
 }
-
 clazzUtil.enableClassExtend(ChartView, ['dispose']);
 clazzUtil.enableClassManagement(ChartView);
-
+function renderTaskPlan(context) {
+  return renderPlanner(context.model);
+}
 function renderTaskReset(context) {
   var seriesModel = context.model;
   var ecModel = context.ecModel;
@@ -162,8 +166,7 @@ function renderTaskReset(context) {
   }
   return progressMethodMap[methodName];
 }
-
-const progressMethodMap = {
+var progressMethodMap = {
   incrementalPrepareRender: {
     progress(params, context) {
       context.view.incrementalRender(params, context.model, context.ecModel, context.api, context.payload);

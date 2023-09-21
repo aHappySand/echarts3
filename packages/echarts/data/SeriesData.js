@@ -16,6 +16,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
+// eslint-disable-next-line no-redeclare
 /* global Int32Array */
 import * as zrUtil from '../../zrender/core/util';
 import Model from '../model/Model';
@@ -50,13 +51,13 @@ const CLONE_PROPERTIES = [
 // -----------------------------
 // Internal method declarations:
 // -----------------------------
-const prepareInvertedIndex;
-const getId;
-const getIdNameFromStore;
-const normalizeDimensions;
-const transferProperties;
-const cloneListForMapAndSample;
-const makeIdFromName;
+let prepareInvertedIndex;
+let getId;
+let getIdNameFromStore;
+let normalizeDimensions;
+let transferProperties;
+let cloneListForMapAndSample;
+let makeIdFromName;
 const SeriesData = /** @class */ (function () {
   /**
    * @param dimensionsInput.dimensions
@@ -111,7 +112,7 @@ const SeriesData = /** @class */ (function () {
     var invertedIndicesMap = {};
     var needsHasOwn = false;
     var emptyObj = {};
-    for (var i = 0; i < dimensions.length; i++) {
+    for (let i = 0; i < dimensions.length; i++) {
       // Use the original dimensions[i], where other flag props may exists.
       var dimInfoInput = dimensions[i];
       var dimensionInfo = zrUtil.isString(dimInfoInput)
@@ -140,7 +141,7 @@ const SeriesData = /** @class */ (function () {
       if (otherDims.itemId === 0) {
         this._idDimIdx = i;
       }
-      if (__DEV__) {
+      if (self.__DEV__) {
         zrUtil.assert(assignStoreDimIdx || dimensionInfo.storeDimIndex >= 0);
       }
       if (assignStoreDimIdx) {
@@ -247,7 +248,7 @@ const SeriesData = /** @class */ (function () {
   };
   SeriesData.prototype._getStoreDimIndex = function (dim) {
     var dimIdx = this.getDimensionIndex(dim);
-    if (__DEV__) {
+    if (self.__DEV__) {
       if (dimIdx == null) {
         throw new Error(`Unknown dimension ${dim}`);
       }
@@ -362,7 +363,7 @@ const SeriesData = /** @class */ (function () {
     var shouldMakeIdFromName = this._shouldMakeIdFromName();
     this._updateOrdinalMeta();
     if (names) {
-      for (var idx = start; idx < end; idx++) {
+      for (let idx = start; idx < end; idx++) {
         var sourceIdx = idx - start;
         this._nameList[idx] = names[sourceIdx];
         if (shouldMakeIdFromName) {
@@ -374,7 +375,7 @@ const SeriesData = /** @class */ (function () {
   SeriesData.prototype._updateOrdinalMeta = function () {
     var store = this._store;
     var dimensions = this.dimensions;
-    for (var i = 0; i < dimensions.length; i++) {
+    for (let i = 0; i < dimensions.length; i++) {
       var dimInfo = this._dimInfos[dimensions[i]];
       if (dimInfo.ordinalMeta) {
         store.collectOrdinalMeta(dimInfo.storeDimIndex, dimInfo.ordinalMeta);
@@ -408,7 +409,7 @@ const SeriesData = /** @class */ (function () {
     // This kind of ids and names are always stored `_nameList` and `_idList`.
     if (isFormatOriginal && !provider.pure) {
       var sharedDataItem = [];
-      for (var idx = start; idx < end; idx++) {
+      for (let idx = start; idx < end; idx++) {
         // NOTICE: Try not to write things into dataItem
         var dataItem = provider.getItem(idx, sharedDataItem);
         if (!this.hasItemOption && isDataItemOption(dataItem)) {
@@ -427,7 +428,7 @@ const SeriesData = /** @class */ (function () {
       }
     }
     if (this._shouldMakeIdFromName()) {
-      for (var idx = start; idx < end; idx++) {
+      for (let idx = start; idx < end; idx++) {
         makeIdFromName(this, idx);
       }
     }
@@ -550,7 +551,7 @@ const SeriesData = /** @class */ (function () {
    */
   SeriesData.prototype.hasValue = function (idx) {
     var dataDimIndicesOnCoord = this._dimSummary.dataDimIndicesOnCoord;
-    for (var i = 0, len = dataDimIndicesOnCoord.length; i < len; i++) {
+    for (let i = 0, len = dataDimIndicesOnCoord.length; i < len; i++) {
       // Ordinal type originally can be string or number.
       // But when an ordinal type is used on coord, it can
       // not be string but only number. So we can also use isNaN.
@@ -564,7 +565,7 @@ const SeriesData = /** @class */ (function () {
    * Retrieve the index with given name
    */
   SeriesData.prototype.indexOfName = function (name) {
-    for (var i = 0, len = this._store.count(); i < len; i++) {
+    for (let i = 0, len = this._store.count(); i < len; i++) {
       if (this.getName(i) === name) {
         return i;
       }
@@ -586,7 +587,7 @@ const SeriesData = /** @class */ (function () {
    */
   SeriesData.prototype.rawIndexOf = function (dim, value) {
     var invertedIndices = dim && this._invertedIndicesMap[dim];
-    if (__DEV__) {
+    if (self.__DEV__) {
       if (!invertedIndices) {
         throw new Error('Do not supported yet');
       }
@@ -679,7 +680,7 @@ const SeriesData = /** @class */ (function () {
     var _this = this;
     // ctxCompat just for compat echarts3
     var fCtx = (ctx || ctxCompat || this);
-    if (__DEV__) {
+    if (self.__DEV__) {
       zrUtil.each(normalizeDimensions(dims), (dim) => {
         var dimInfo = _this.getDimensionInfo(dim);
         if (!dimInfo.isCalculationCoord) {
@@ -866,6 +867,7 @@ const SeriesData = /** @class */ (function () {
         : map(this.dimensions, this._getDimInfo, this), this.hostModel);
     }
     transferProperties(list, this);
+
     list._store = this._store;
     return list;
   };
@@ -899,10 +901,10 @@ const SeriesData = /** @class */ (function () {
           invertedIndices = invertedIndicesMap[dim] = new CtorInt32Array(ordinalMeta.categories.length);
           // The default value of TypedArray is 0. To avoid miss
           // mapping to 0, we should set it as INDEX_NOT_FOUND.
-          for (var i = 0; i < invertedIndices.length; i++) {
+          for (let i = 0; i < invertedIndices.length; i++) {
             invertedIndices[i] = INDEX_NOT_FOUND;
           }
-          for (var i = 0; i < store.count(); i++) {
+          for (let i = 0; i < store.count(); i++) {
             // Only support the case that all values are distinct.
             invertedIndices[store.get(dimInfo.storeDimIndex, i)] = i;
           }

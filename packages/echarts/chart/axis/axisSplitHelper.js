@@ -46,7 +46,7 @@ export function rectCoordAxisBuildSplitArea(axisView, axisGroup, axisModel, grid
   var newSplitAreaColors = zrUtil.createHashMap();
   var colorIndex = 0;
   if (lastSplitAreaColors) {
-    for (var i = 0; i < ticksCoords.length; i++) {
+    for (let i = 0; i < ticksCoords.length; i++) {
       var cIndex = lastSplitAreaColors.get(ticksCoords[i].tickValue);
       if (cIndex != null) {
         colorIndex = (cIndex + (areaColorsLen - 1) * i) % areaColorsLen;
@@ -57,12 +57,12 @@ export function rectCoordAxisBuildSplitArea(axisView, axisGroup, axisModel, grid
   var prev = axis.toGlobalCoord(ticksCoords[0].coord);
   var areaStyle = areaStyleModel.getAreaStyle();
   areaColors = zrUtil.isArray(areaColors) ? areaColors : [areaColors];
-  for (var i = 1; i < ticksCoords.length; i++) {
+  for (let i = 1; i < ticksCoords.length; i++) {
     var tickCoord = axis.toGlobalCoord(ticksCoords[i].coord);
-    var x = void 0;
-    var y = void 0;
-    var width = void 0;
-    var height = void 0;
+    var x;
+    var y;
+    var width;
+    var height;
     if (axis.isHorizontal()) {
       x = prev;
       y = gridRect.y;

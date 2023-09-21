@@ -134,7 +134,7 @@ const ComponentModel = /** @class */ (function (_super) {
         clz = clz.superClass;
       }
       var defaultOption = {};
-      for (var i = optList.length - 1; i >= 0; i--) {
+      for (let i = optList.length - 1; i >= 0; i--) {
         defaultOption = zrUtil.merge(defaultOption, optList[i], true);
       }
       fields.defaultOption = defaultOption;

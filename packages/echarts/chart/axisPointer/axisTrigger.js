@@ -340,7 +340,7 @@ function dispatchHighDownActually(axesInfo, dispatchAction, api) {
 }
 
 function findInputAxisInfo(inputAxesInfo, axisInfo) {
-  for (var i = 0; i < (inputAxesInfo || []).length; i++) {
+  for (let i = 0; i < (inputAxesInfo || []).length; i++) {
     var inputAxisInfo = inputAxesInfo[i];
     if (axisInfo.axis.dim === inputAxisInfo.axisDim &&
       axisInfo.axis.model.componentIndex === inputAxisInfo.axisIndex) {

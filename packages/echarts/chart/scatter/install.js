@@ -18,10 +18,14 @@
 */
 import { use } from '../../extension';
 import ScatterSeriesModel from './ScatterSeries';
+import ScatterView from './ScatterView';
 import { install as installGridSimple } from '../../component/grid/installSimple';
+import layoutPoints from '../../layout/points';
 
 export function install(registers) {
   // In case developer forget to include grid component
   use(installGridSimple);
   registers.registerSeriesModel(ScatterSeriesModel);
+  registers.registerChartView(ScatterView);
+  registers.registerLayout(layoutPoints('scatter'));
 }

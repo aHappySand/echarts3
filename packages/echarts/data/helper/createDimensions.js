@@ -74,7 +74,7 @@ export default function prepareSeriesDataSchema(
   }
   var encodeDefMap = createHashMap(encodeDef);
   var indicesMap = new CtorInt32Array(dimCount);
-  for (var i = 0; i < indicesMap.length; i++) {
+  for (let i = 0; i < indicesMap.length; i++) {
     indicesMap[i] = -1;
   }
 
@@ -103,7 +103,7 @@ export default function prepareSeriesDataSchema(
   }
 
   if (!omitUnusedDimensions) {
-    for (var i = 0; i < dimCount; i++) {
+    for (let i = 0; i < dimCount; i++) {
       getResultItem(i);
     }
   }
@@ -160,7 +160,7 @@ export default function prepareSeriesDataSchema(
     dataDims = normalizeToArray(dataDims);
     // dimensions provides default dim sequences.
     if (!dataDims.length) {
-      for (var i = 0; i < (sysDimItemDimsDef && sysDimItemDimsDef.length || 1); i++) {
+      for (let i = 0; i < (sysDimItemDimsDef && sysDimItemDimsDef.length || 1); i++) {
         while (availDimIdx < dimCount && getResultItem(availDimIdx).coordDim != null) {
           availDimIdx++;
         }
@@ -214,7 +214,7 @@ export default function prepareSeriesDataSchema(
 
   // Set dim `name` and other `coordDim` and other props.
   if (!omitUnusedDimensions) {
-    for (var resultDimIdx = 0; resultDimIdx < dimCount; resultDimIdx++) {
+    for (let resultDimIdx = 0; resultDimIdx < dimCount; resultDimIdx++) {
       var resultItem = getResultItem(resultDimIdx);
       var coordDim = resultItem.coordDim;
       if (coordDim == null) {
@@ -268,7 +268,7 @@ export default function prepareSeriesDataSchema(
 
 function removeDuplication(result) {
   var duplicationMap = createHashMap();
-  for (var i = 0; i < result.length; i++) {
+  for (let i = 0; i < result.length; i++) {
     var dim = result[i];
     var dimOriginalName = dim.name;
     var count = duplicationMap.get(dimOriginalName) || 0;

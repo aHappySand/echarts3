@@ -78,7 +78,7 @@ export function createOrUpdatePatternFromDecal(decalObject, api) {
   function setPatternnSource(pattern) {
     var keys = [dpr];
     var isValidKey = true;
-    for (var i = 0; i < decalKeys.length; ++i) {
+    for (let i = 0; i < decalKeys.length; ++i) {
       var value = decalOpt[decalKeys[i]];
       if (value != null &&
         !isArray(value) &&
@@ -145,16 +145,16 @@ export function createOrUpdatePatternFromDecal(decalObject, api) {
        * |-- -- -- -- -- |-- -- -- ...
        */
       var width = 1;
-      for (var i = 0, xlen = lineBlockLengthsX.length; i < xlen; ++i) {
+      for (let i = 0, xlen = lineBlockLengthsX.length; i < xlen; ++i) {
         width = getLeastCommonMultiple(width, lineBlockLengthsX[i]);
       }
       var symbolRepeats = 1;
-      for (var i = 0, xlen = symbolArray.length; i < xlen; ++i) {
+      for (let i = 0, xlen = symbolArray.length; i < xlen; ++i) {
         symbolRepeats = getLeastCommonMultiple(symbolRepeats, symbolArray[i].length);
       }
       width *= symbolRepeats;
       var height = lineBlockLengthY * lineBlockLengthsX.length * symbolArray.length;
-      if (__DEV__) {
+      if (self.__DEV__) {
         var warn = function (attrName) {
           /* eslint-disable-next-line */
           console.warn("Calculated decal size is greater than " + attrName + " due to decal option settings so " + attrName + " is used for the decal size. Please consider changing the decal option to make a smaller decal or set " + attrName + " to be larger to avoid incontinuity.");
@@ -181,7 +181,7 @@ export function createOrUpdatePatternFromDecal(decalObject, api) {
         }
       }
       var ySum = 0;
-      for (var i = 0; i < dashArrayY.length; ++i) {
+      for (let i = 0; i < dashArrayY.length; ++i) {
         ySum += dashArrayY[i];
       }
       if (ySum <= 0) {
@@ -200,7 +200,7 @@ export function createOrUpdatePatternFromDecal(decalObject, api) {
           var xId1Total = 0;
           while (x < pSize.width * 2) {
             var xSum = 0;
-            for (var i = 0; i < dashArrayX[xId0].length; ++i) {
+            for (let i = 0; i < dashArrayX[xId0].length; ++i) {
               xSum += dashArrayX[xId0][i];
             }
             if (xSum <= 0) {
@@ -268,7 +268,7 @@ function normalizeSymbolArray(symbol) {
     return [[symbol]];
   }
   var isAllString = true;
-  for (var i = 0; i < symbol.length; ++i) {
+  for (let i = 0; i < symbol.length; ++i) {
     if (!isString(symbol[i])) {
       isAllString = false;
       break;
@@ -278,7 +278,7 @@ function normalizeSymbolArray(symbol) {
     return normalizeSymbolArray([symbol]);
   }
   var result = [];
-  for (var i = 0; i < symbol.length; ++i) {
+  for (let i = 0; i < symbol.length; ++i) {
     if (isString(symbol[i])) {
       result.push([symbol[i]]);
     } else {
@@ -307,7 +307,7 @@ function normalizeDashArrayX(dash) {
    * while [20, [5, 10]] should be normalized into [[20, 20], [5, 10]]
    */
   var isAllNumber = true;
-  for (var i = 0; i < dash.length; ++i) {
+  for (let i = 0; i < dash.length; ++i) {
     if (!isNumber(dash[i])) {
       isAllNumber = false;
       break;
@@ -317,7 +317,7 @@ function normalizeDashArrayX(dash) {
     return normalizeDashArrayX([dash]);
   }
   var result = [];
-  for (var i = 0; i < dash.length; ++i) {
+  for (let i = 0; i < dash.length; ++i) {
     if (isNumber(dash[i])) {
       var dashValue = Math.ceil(dash[i]);
       result.push([dashValue, dashValue]);
@@ -367,7 +367,7 @@ function getLineBlockLengthX(dash) {
 
 function getLineBlockLengthY(dash) {
   var blockLength = 0;
-  for (var i = 0; i < dash.length; ++i) {
+  for (let i = 0; i < dash.length; ++i) {
     blockLength += dash[i];
   }
   if (dash.length % 2 === 1) {

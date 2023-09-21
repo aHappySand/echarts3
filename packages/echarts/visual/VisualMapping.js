@@ -164,7 +164,7 @@ const VisualMapping = /** @class */ (function () {
     var possibleI;
     var abs = Infinity;
     // value has the higher priority.
-    for (var i = 0, len = pieceList.length; i < len; i++) {
+    for (let i = 0, len = pieceList.length; i < len; i++) {
       var pieceValue = pieceList[i].value;
       if (pieceValue != null) {
         if (pieceValue === value ||
@@ -179,7 +179,7 @@ const VisualMapping = /** @class */ (function () {
         findClosestWhenOutside && updatePossible(pieceValue, i);
       }
     }
-    for (var i = 0, len = pieceList.length; i < len; i++) {
+    for (let i = 0, len = pieceList.length; i < len; i++) {
       var piece = pieceList[i];
       var interval = piece.interval;
       var close_1 = piece.close;
@@ -338,7 +338,7 @@ function preprocessForSpecifiedCategory(thisOption) {
   }
   // Remove categories that has no visual,
   // then we can mapping them to CATEGORY_DEFAULT_VISUAL_INDEX.
-  for (var i = categories.length - 1; i >= 0; i--) {
+  for (let i = categories.length - 1; i >= 0; i--) {
     if (visual[i] == null) {
       delete categoryMap[categories[i]];
       categories.pop();

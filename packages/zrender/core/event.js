@@ -44,13 +44,7 @@ function calculateZrXY(el, e, out) {
   out.zrX = out.zrY = 0;
 }
 
-export function getNativeEvent(e) {
-  return e ||
-    window.event;
-}
-
 export function normalizeEvent(el, e, calculate) {
-  e = getNativeEvent(e);
   if (e.zrX != null) {
     return e;
   }

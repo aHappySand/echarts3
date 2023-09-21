@@ -30,7 +30,7 @@ function prepareCoordMarkers(el, saved) {
   markers = saved.markers = [];
   var propLR = ['left', 'right'];
   var propTB = ['top', 'bottom'];
-  for (var i = 0; i < 4; i++) {
+  for (let i = 0; i < 4; i++) {
     var marker = document.createElement('div');
     var stl = marker.style;
     var idxLR = i % 2;
@@ -63,7 +63,7 @@ function preparePointerTransformer(markers, saved, inverse) {
   var srcCoords = [];
   var destCoords = [];
   var oldCoordTheSame = true;
-  for (var i = 0; i < 4; i++) {
+  for (let i = 0; i < 4; i++) {
     var rect = markers[i].getBoundingClientRect();
     var ii = 2 * i;
     var x = rect.left;

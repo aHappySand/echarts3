@@ -76,7 +76,7 @@ export function defaultEmphasis(opt, key, subOpts) {
     opt.emphasis = opt.emphasis || {};
     opt.emphasis[key] = opt.emphasis[key] || {};
     // Default emphasis option from normal
-    for (var i = 0, len = subOpts.length; i < len; i++) {
+    for (let i = 0, len = subOpts.length; i < len; i++) {
       var subOptName = subOpts[i];
       if (!opt.emphasis[key].hasOwnProperty(subOptName) &&
         opt[key].hasOwnProperty(subOptName)) {
@@ -164,7 +164,7 @@ export function mappingToExists(existings, newCmptOptions, mode) {
       newCmptOptions[index] = null;
       return;
     }
-    if (__DEV__) {
+    if (self.__DEV__) {
       // There is some legacy case that name is set as `false`.
       // But should work normally rather than throw error.
       if (cmptOption.id != null && !isValidIdOrName(cmptOption.id)) {
@@ -200,7 +200,7 @@ function prepareResult(existings, existingIdIdxMap, mode) {
   }
   // Do not use native `map` to in case that the array `existings`
   // contains elided items, which will be omitted.
-  for (var index = 0; index < existings.length; index++) {
+  for (let index = 0; index < existings.length; index++) {
     var existing = existings[index];
     // Because of replaceMerge, `existing` may be null/undefined.
     if (existing && existing.id != null) {
@@ -249,7 +249,7 @@ function mappingByName(result, newCmptOptions) {
     if (!cmptOption || cmptOption.name == null) {
       return;
     }
-    for (var i = 0; i < result.length; i++) {
+    for (let i = 0; i < result.length; i++) {
       var existing = result[i].existing;
       if (!result[i].newOption && // Consider name: two map to one.
         // Can not match when both ids existing but different.
@@ -395,7 +395,7 @@ function keyExistAndEqual(attr, obj1, obj2) {
  * @return return null if not exist.
  */
 function makeComparableKey(val) {
-  if (__DEV__) {
+  if (self.__DEV__) {
     if (val == null) {
       throw new Error();
     }
@@ -415,7 +415,7 @@ export function convertOptionIdName(idOrName, defaultValue) {
 }
 
 function warnInvalidateIdOrName(idOrName) {
-  if (__DEV__) {
+  if (self.__DEV__) {
     warn(`\`${idOrName}\` is invalid id or name. Must be a string or number.`);
   }
 }
@@ -483,14 +483,14 @@ export function compressBatches(batchA, batchB) {
   return [mapToArray(mapA), mapToArray(mapB)];
 
   function makeMap(sourceBatch, map, otherMap) {
-    for (var i = 0, len = sourceBatch.length; i < len; i++) {
+    for (let i = 0, len = sourceBatch.length; i < len; i++) {
       var seriesId = convertOptionIdName(sourceBatch[i].seriesId, null);
       if (seriesId == null) {
         return;
       }
       var dataIndices = normalizeToArray(sourceBatch[i].dataIndex);
       var otherDataIndices = otherMap && otherMap[seriesId];
-      for (var j = 0, lenj = dataIndices.length; j < lenj; j++) {
+      for (let j = 0, lenj = dataIndices.length; j < lenj; j++) {
         var dataIndex = dataIndices[j];
         if (otherDataIndices && otherDataIndices[dataIndex]) {
           otherDataIndices[dataIndex] = null;
@@ -503,7 +503,7 @@ export function compressBatches(batchA, batchB) {
 
   function mapToArray(map, isData) {
     var result = [];
-    for (var i in map) {
+    for (let i in map) {
       if (map.hasOwnProperty(i) && map[i] != null) {
         if (isData) {
           result.push(+i);
@@ -563,7 +563,7 @@ export function makeInner() {
   };
 }
 
-const innerUniqueIndex = getRandomIdBase();
+let innerUniqueIndex = getRandomIdBase();
 
 /**
  * The same behavior as `component.getReferringComponents`.
@@ -636,7 +636,7 @@ export function queryReferringComponents(ecModel, mainType, userOption, opt) {
   };
   if (!result.specified) {
     // Use the first as default if `useDefault`.
-    var firstCmpt = void 0;
+    var firstCmpt;
     result.models = (opt.useDefault && (firstCmpt = ecModel.getComponent(mainType))) ? [firstCmpt] : [];
     return result;
   }
@@ -728,7 +728,7 @@ export function interpolateRawValues(data, precision, sourceValue, targetValue, 
   var leftArr = sourceValue;
   var rightArr = targetValue;
   var length_1 = Math.max(leftArr ? leftArr.length : 0, rightArr.length);
-  for (var i = 0; i < length_1; ++i) {
+  for (let i = 0; i < length_1; ++i) {
     var info = data.getDimensionInfo(i);
     // Don't interpolate ordinal dims
     if (info && info.type === 'ordinal') {

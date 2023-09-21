@@ -57,7 +57,7 @@ const CartesianAxisView = /** @class */ (function (_super) {
     var axisBuilder = new AxisBuilder(axisModel, zrUtil.extend({
       handleAutoShown(elementType) {
         var cartesians = gridModel.coordinateSystem.getCartesians();
-        for (var i = 0; i < cartesians.length; i++) {
+        for (let i = 0; i < cartesians.length; i++) {
           if (isIntervalOrLogScale(cartesians[i].getOtherAxis(axisModel.axis).scale)) {
             // Still show axis tick or axisLine if other axis is value / log
             return true;
@@ -108,7 +108,7 @@ const axisElementBuilders = {
     var p1 = [];
     var p2 = [];
     var lineStyle = lineStyleModel.getLineStyle();
-    for (var i = 0; i < ticksCoords.length; i++) {
+    for (let i = 0; i < ticksCoords.length; i++) {
       var tickCoord = axis.toGlobalCoord(ticksCoords[i].coord);
       if (isHorizontal) {
         p1[0] = tickCoord;
@@ -154,8 +154,8 @@ const axisElementBuilders = {
     var p1 = [];
     var p2 = [];
     var lineStyle = lineStyleModel.getLineStyle();
-    for (var i = 0; i < minorTicksCoords.length; i++) {
-      for (var k = 0; k < minorTicksCoords[i].length; k++) {
+    for (let i = 0; i < minorTicksCoords.length; i++) {
+      for (let k = 0; k < minorTicksCoords[i].length; k++) {
         var tickCoord = axis.toGlobalCoord(minorTicksCoords[i][k].coord);
         if (isHorizontal) {
           p1[0] = tickCoord;

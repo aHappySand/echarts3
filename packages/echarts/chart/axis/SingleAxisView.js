@@ -82,7 +82,7 @@ const axisElementBuilders = {
     });
     var p1 = [];
     var p2 = [];
-    for (var i = 0; i < ticksCoords.length; ++i) {
+    for (let i = 0; i < ticksCoords.length; ++i) {
       var tickCoord = axis.toGlobalCoord(ticksCoords[i].coord);
       if (isHorizontal) {
         p1[0] = tickCoord;
@@ -110,7 +110,7 @@ const axisElementBuilders = {
       splitLines[colorIndex].push(line);
     }
     var lineStyle = lineStyleModel.getLineStyle(['color']);
-    for (var i = 0; i < splitLines.length; ++i) {
+    for (let i = 0; i < splitLines.length; ++i) {
       group.add(graphic.mergePath(splitLines[i], {
         style: zrUtil.defaults({
           stroke: lineColors[i % lineColors.length]

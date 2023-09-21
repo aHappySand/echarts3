@@ -5,7 +5,7 @@
 </template>
 
 <script>
-
+import { cloneDom, cloneEvent } from './virtual';
 
 const emitType = {
   MOUSE_MOVE_INFO: 'onMousemoveInfo',
@@ -45,14 +45,14 @@ export default {
 
       this.onContextMenu = (e) => {
         e.preventDefault();
-        this.$emit(emitType.ORBIT_CONTROLS, { type: 'contextmenu', event: this.cloneEvent(e) });
+        this.$emit(emitType.ORBIT_CONTROLS, { type: 'contextmenu', event: this._cloneEvent(e) });
       };
 
       let hasCtrl = false;
       this.onPointerDown = (e) => {
         hasCtrl = e.ctrlKey;
         if (!hasCtrl) {
-          this.$emit(emitType.ORBIT_CONTROLS, { type: 'pointerdown', event: this.cloneEvent(e) });
+          this.$emit(emitType.ORBIT_CONTROLS, { type: 'pointerdown', event: this._cloneEvent(e) });
         }
         if (pointers.length === 0) {
           $el.setPointerCapture(e.pointerId);
@@ -65,12 +65,12 @@ export default {
       };
 
       this.onPointerMove = (e) => {
-        this.$emit(emitType.ORBIT_CONTROLS, { type: 'pointermove', event: this.cloneEvent(e) });
+        this.$emit(emitType.ORBIT_CONTROLS, { type: 'pointermove', event: this._cloneEvent(e) });
       };
 
       this.onPointerUp = (e) => {
         if (!hasCtrl) {
-          this.$emit(emitType.ORBIT_CONTROLS, { type: 'pointerup', event: this.cloneEvent(e) });
+          this.$emit(emitType.ORBIT_CONTROLS, { type: 'pointerup', event: this._cloneEvent(e) });
         }
         hasCtrl = false;
         removePointer(e);
@@ -83,8 +83,7 @@ export default {
 
       this.onMouseWheel = (e) => {
         e.preventDefault();
-
-        this.$emit(emitType.ORBIT_CONTROLS, { type: 'wheel', event: this.cloneEvent(e) });
+        this.$emit(emitType.ORBIT_CONTROLS, { type: 'wheel', event: this._cloneEvent(e) });
       };
 
       this.onMouseMove = (e) => {
@@ -93,11 +92,7 @@ export default {
         }
         this.onMouseMove.timeout = setTimeout(() => {
           if (pointers.length === 0) {
-            const mouse = {};
-            const rect = $el.getBoundingClientRect();
-            mouse.x = ((e.x - rect.x) / rect.width) * 2 - 1;
-            mouse.y = -((e.y - rect.y) / rect.height) * 2 + 1;
-            this.$emit(emitType.MOUSE_MOVE_INFO, mouse, this.cloneEvent(e));
+            this.$emit(emitType.MOUSE_MOVE_INFO, { type: 'mousemove', event: this._cloneEvent(e) });
           }
         }, 100);
       };
@@ -109,7 +104,7 @@ export default {
       $el.addEventListener('wheel', this.onMouseWheel, { passive: false });
     },
     emitDom() {
-      this.$emit(emitType.DOM_PROPERTY, this.cloneDom());
+      this.$emit(emitType.DOM_PROPERTY, this._cloneDom());
     },
     removeEvent() {
       const $el = this.$refs.container;
@@ -121,102 +116,16 @@ export default {
       $el.removeEventListener('pointerup', this.onPointerUp);
       $el.removeEventListener('pointermove', this.onMouseMove);
     },
-    getContainerPosition() {
-      const {
-        width,
-        height,
-        top,
-        right,
-        bottom,
-        left
-      } = $el.getBoundingClientRect();
-
-      return {
-        width,
-        height,
-        top,
-        right,
-        bottom,
-        left,
-        offsetLeft: $el.offsetLeft,
-        offsetTop: $el.offsetTop,
-        dom: $el,
-      };
-    },
-
-    cloneEvent(e) {
-      const propertys = ['isTrusted',
-        'altKey',
-        'altitudeAngle',
-        'azimuthAngle',
-        'bubbles',
-        'button',
-        'buttons',
-        'cancelBubble',
-        'cancelable',
-        'clientX',
-        'clientY',
-        'composed',
-        'ctrlKey',
-        'defaultPrevented',
-        'detail',
-        'eventPhase',
-        'height',
-        'isPrimary',
-        'layerX',
-        'layerY',
-        'deltaY',
-        'deltaX',
-        'deltaZ',
-        'metaKey',
-        'movementX',
-        'movementY',
-        'offsetX',
-        'offsetY',
-        'pageX',
-        'pageY',
-        'pointerId',
-        'pointerType',
-        'pressure',
-        'returnValue',
-        'screenX',
-        'screenY',
-        'shiftKey',
-        'tangentialPressure',
-        'tiltX',
-        'tiltY',
-        'timeStamp',
-        'twist',
-        'type',
-        'which',
-        'width',
-        'x',
-        'y',];
-      const event = {};
-      propertys.forEach(field => {
-        event[field] = e[field];
-      });
+    _cloneEvent(e) {
+      const rect = this.$refs.container.getBoundingClientRect();
+      const event = cloneEvent(e);
+      event.ndcX = ((e.x - rect.x) / rect.width) * 2 - 1;
+      event.ndcY = -((e.y - rect.y) / rect.height) * 2 + 1;
       return event;
     },
-    cloneDom() {
+    _cloneDom() {
       const dom = this.$refs.container;
-      const propertys = [
-        'clientHeight',
-        'clientLeft',
-        'clientWidth',
-        'clientTop',
-      ];
-
-      const { bottom, height, left, top, right, width, x, y } = dom.getBoundingClientRect();
-
-      const elem = {
-        rect: { bottom, height, left, top, right, width, x, y, offsetLeft: dom.offsetLeft, offsetTop: dom.offsetTop }
-      };
-      propertys.forEach(field => {
-        elem[field] = dom[field];
-      });
-
-      return elem;
+      return cloneDom(dom);
     }
   },
   beforeDestroy() {

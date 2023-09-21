@@ -16,9 +16,10 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-const platform = '';
+let platform = '';
 // Navigator not exists in node
 if (typeof navigator !== 'undefined') {
+  // eslint-disable-next-line no-redeclare
   /* global navigator */
   platform = navigator.platform || '';
 }
@@ -104,7 +105,7 @@ export default {
   animationThreshold: 2000,
   // Configuration for progressive/incremental rendering
   progressiveThreshold: 3000,
-  progressive: 400,
+  progressive: 100000,
   // Threshold of if use single hover layer to optimize.
   // It is recommended that `hoverLayerThreshold` is equivalent to or less than
   // `progressiveThreshold`, otherwise hover will cause restart of progressive,

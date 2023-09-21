@@ -1,8 +1,9 @@
-
+import Echarts3 from '../packages/index.js';
 
 import { version } from '../package.json';
 
 const components = [
+  Echarts3
 ];
 
 const install = (Vue) => {
@@ -19,6 +20,7 @@ if (typeof window !== 'undefined' && window.Vue) {
 }
 
 export {
+  Echarts3
 };
 
 

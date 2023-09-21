@@ -16,7 +16,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-import { isArray } from 'zrender/src/core/util';
+import { isArray } from '../../../zrender/core/util';
 import AxisView from '../axis/AxisView';
 import CartesianAxisPointer from './CartesianAxisPointer';
 import AxisPointerModel from './AxisPointerModel';

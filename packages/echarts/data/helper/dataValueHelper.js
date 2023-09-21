@@ -94,7 +94,7 @@ const FilterOrderComparator = /** @class */ (function () {
   function FilterOrderComparator(op, rval) {
     if (!isNumber(rval)) {
       var errMsg = '';
-      if (__DEV__) {
+      if (self.__DEV__) {
         errMsg = 'rvalue of "<", ">", "<=", ">=" can only be number in filter.';
       }
       throwError(errMsg);

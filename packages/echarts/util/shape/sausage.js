@@ -47,7 +47,7 @@ const SausagePath = /** @class */ (function (_super) {
   SausagePath.prototype.getDefaultShape = function () {
     return new SausageShape();
   };
-  SausagePath.prototype.buildPath = function (ctx, shape) {
+  SausagePath.prototype.draw = function (ctx, shape) {
     var cx = shape.cx;
     var cy = shape.cy;
     var r0 = Math.max(shape.r0 || 0, 0);

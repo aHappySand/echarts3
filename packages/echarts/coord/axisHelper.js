@@ -262,7 +262,7 @@ export function estimateLabelUnionRect(axis) {
   if (tickCount > 40) {
     step = Math.ceil(tickCount / 40);
   }
-  for (var i = 0; i < tickCount; i += step) {
+  for (let i = 0; i < tickCount; i += step) {
     var tick = realNumberScaleTicks
       ? realNumberScaleTicks[i]
       : {

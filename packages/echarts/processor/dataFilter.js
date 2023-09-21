@@ -30,7 +30,7 @@ export default function dataFilter(seriesType) {
       data.filterSelf((idx) => {
         var name = data.getName(idx);
         // If in any legend component the status is not selected.
-        for (var i = 0; i < legendModels.length; i++) {
+        for (let i = 0; i < legendModels.length; i++) {
           // @ts-ignore FIXME: LegendModel
           if (!legendModels[i].isSelected(name)) {
             return false;

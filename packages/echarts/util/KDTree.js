@@ -162,7 +162,7 @@ const KDTree = /** @class */ (function () {
     var stack = this._stack;
     var idx = 0;
     var nearestNList = this._nearstNList;
-    for (var i = 0; i < N; i++) {
+    for (let i = 0; i < N; i++) {
       // Allocate
       if (!nearestNList[i]) {
         nearestNList[i] = {
@@ -220,7 +220,7 @@ const KDTree = /** @class */ (function () {
       }
     }
     // Copy to output
-    for (var i = 0; i < found; i++) {
+    for (let i = 0; i < found; i++) {
       output[i] = nearestNList[i].node.data;
     }
     output.length = found;

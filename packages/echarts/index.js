@@ -25,7 +25,13 @@ import { use } from './extension';
 // not included in this list.
 // ----------------------------------------------
 import { ScatterChart } from './export/charts';
-import { GridComponent, TitleComponent, } from './export/components';
+import { GridComponent, TitleComponent, TooltipComponent } from './export/components';
+
+if (typeof window === 'object') {
+  // eslint-disable-next-line no-global-assign
+  self = window;
+}
+self.__DEV__ = true;
 
 export * from './export/core';
 
@@ -62,3 +68,4 @@ use(GridComponent);
 //     title: {...}
 // });
 use(TitleComponent);
+use(TooltipComponent);

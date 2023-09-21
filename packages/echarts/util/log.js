@@ -50,14 +50,14 @@ export function error(str, onlyOnce) {
 }
 
 export function deprecateLog(str) {
-  if (__DEV__) {
+  if (self.__DEV__) {
     // Not display duplicate message.
     outputLog('warn', `DEPRECATED: ${str}`, true);
   }
 }
 
 export function deprecateReplaceLog(oldOpt, newOpt, scope) {
-  if (__DEV__) {
+  if (self.__DEV__) {
     deprecateLog(`${scope ? `[${scope}]` : ''}${oldOpt} is deprecated, use ${newOpt} instead.`);
   }
 }
@@ -73,11 +73,11 @@ export function deprecateReplaceLog(oldOpt, newOpt, scope) {
  */
 export function makePrintable() {
   var hintInfo = [];
-  for (var _i = 0; _i < arguments.length; _i++) {
+  for (let _i = 0; _i < arguments.length; _i++) {
     hintInfo[_i] = arguments[_i];
   }
   var msg = '';
-  if (__DEV__) {
+  if (self.__DEV__) {
     // Fuzzy stringify for print.
     // This code only exist in dev environment.
     var makePrintableStringIfPossible_1 = function (val) {

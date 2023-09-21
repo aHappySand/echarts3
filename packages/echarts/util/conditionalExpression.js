@@ -50,7 +50,7 @@ const RegExpEvaluator = /** @class */ (function () {
         : null;
     if (condValue == null) {
       var errMsg = '';
-      if (__DEV__) {
+      if (self.__DEV__) {
         errMsg = makePrintable('Illegal regexp', rVal, 'in');
       }
       throwError(errMsg);
@@ -80,7 +80,7 @@ const AndConditionInternal = /** @class */ (function () {
 
   AndConditionInternal.prototype.evaluate = function () {
     var children = this.children;
-    for (var i = 0; i < children.length; i++) {
+    for (let i = 0; i < children.length; i++) {
       if (!children[i].evaluate()) {
         return false;
       }
@@ -95,7 +95,7 @@ const OrConditionInternal = /** @class */ (function () {
 
   OrConditionInternal.prototype.evaluate = function () {
     var children = this.children;
-    for (var i = 0; i < children.length; i++) {
+    for (let i = 0; i < children.length; i++) {
       if (children[i].evaluate()) {
         return true;
       }
@@ -124,7 +124,7 @@ const RelationalConditionInternal = /** @class */ (function () {
     var tarValRaw = getValue(this.valueGetterParam);
     var tarValParsed = needParse ? this.valueParser(tarValRaw) : null;
     // Relational cond follow "and" logic internally.
-    for (var i = 0; i < this.subCondList.length; i++) {
+    for (let i = 0; i < this.subCondList.length; i++) {
       if (!this.subCondList[i].evaluate(needParse ? tarValParsed : tarValRaw)) {
         return false;
       }
@@ -142,7 +142,7 @@ function parseOption(exprOption, getters) {
   }
   var errMsg = '';
   if (!isObjectNotArray(exprOption)) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       errMsg = makePrintable('Illegal config. Expect a plain object but actually', exprOption);
     }
     throwError(errMsg);
@@ -160,7 +160,7 @@ function parseOption(exprOption, getters) {
 function parseAndOrOption(op, exprOption, getters) {
   var subOptionArr = exprOption[op];
   var errMsg = '';
-  if (__DEV__) {
+  if (self.__DEV__) {
     errMsg = makePrintable(`"and"/"or" condition should only be \`${op}: [...]\` and must not be empty array.`, 'Illegal condition:', exprOption);
   }
   if (!isArray(subOptionArr)) {
@@ -180,7 +180,7 @@ function parseAndOrOption(op, exprOption, getters) {
 function parseNotOption(exprOption, getters) {
   var subOption = exprOption.not;
   var errMsg = '';
-  if (__DEV__) {
+  if (self.__DEV__) {
     errMsg = makePrintable('"not" condition should only be `not: {}`.', 'Illegal condition:', exprOption);
   }
   if (!isObjectNotArray(subOption)) {
@@ -201,7 +201,7 @@ function parseRelationalOption(exprOption, getters) {
   var exprKeys = keys(exprOption);
   var parserName = exprOption.parser;
   var valueParser = parserName ? getRawValueParser(parserName) : null;
-  for (var i = 0; i < exprKeys.length; i++) {
+  for (let i = 0; i < exprKeys.length; i++) {
     var keyRaw = exprKeys[i];
     if (keyRaw === 'parser' || getters.valueGetterAttrMap.get(keyRaw)) {
       continue;
@@ -214,7 +214,7 @@ function parseRelationalOption(exprOption, getters) {
     var evaluator = createFilterComparator(op, condValueParsed) ||
       (op === 'reg' && new RegExpEvaluator(condValueParsed));
     if (!evaluator) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         errMsg = makePrintable(`Illegal relational operation: "${keyRaw}" in condition:`, exprOption);
       }
       throwError(errMsg);
@@ -222,7 +222,7 @@ function parseRelationalOption(exprOption, getters) {
     subCondList.push(evaluator);
   }
   if (!subCondList.length) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       errMsg = makePrintable('Relational condition must have at least one operator.', 'Illegal condition:', exprOption);
     }
     // No relational operator always disabled in case of dangers result.

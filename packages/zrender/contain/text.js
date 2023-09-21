@@ -34,7 +34,7 @@ export function getBoundingRect(text, font, textAlign, textBaseline) {
     return innerGetBoundingRect(textLines[0], font, textAlign, textBaseline);
   }
   var uniondRect = new BoundingRect(0, 0, 0, 0);
-  for (var i = 0; i < textLines.length; i++) {
+  for (let i = 0; i < textLines.length; i++) {
     var rect = innerGetBoundingRect(textLines[i], font, textAlign, textBaseline);
     i === 0 ? uniondRect.copy(rect) : uniondRect.union(rect);
   }

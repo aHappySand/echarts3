@@ -43,5 +43,13 @@ module.exports = {
     'no-var': 'off',
     'vars-on-top': 'off',
     'no-unused-expressions': 'off',
+    'no-continue': 'off',
+    'camelcase': 'off',
+    'no-case-declarations': 'off',
+    'no-mixed-operators': 'off',
+    'brace-style': 'off',
+    'no-return-assign': 'off',
+    'no-cond-assign': 'off',
+    'no-restricted-properties': 'off',
   },
 };

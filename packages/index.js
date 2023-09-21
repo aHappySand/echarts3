@@ -1,8 +1,8 @@
-import ZScatter from './src/scatter';
+import Echarts3 from './src/index';
 
 /* istanbul ignore next */
-ZScatter.install = function install(Vue) {
-  Vue.component(ZScatter.name, ZScatter);
+Echarts3.install = function install(Vue) {
+  Vue.component(Echarts3.name, Echarts3);
 };
 
-export default ZScatter;
+export default Echarts3;

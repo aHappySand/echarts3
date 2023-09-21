@@ -42,7 +42,7 @@ export function getLayoutOnAxis(opt) {
     return;
   }
   var bandWidth = baseAxis.getBandWidth();
-  for (var i = 0; i < opt.count || 0; i++) {
+  for (let i = 0; i < opt.count || 0; i++) {
     params.push(defaults({
       bandWidth,
       axisKey,
@@ -51,7 +51,7 @@ export function getLayoutOnAxis(opt) {
   }
   var widthAndOffsets = doCalBarWidthAndOffset(params);
   var result = [];
-  for (var i = 0; i < opt.count; i++) {
+  for (let i = 0; i < opt.count; i++) {
     var item = widthAndOffsets[axisKey][STACK_PREFIX + i];
     item.offsetCenter = item.offset + item.width / 2;
     result.push(item);
@@ -97,7 +97,7 @@ function getValueAxesMinGaps(barSeries) {
     var key = `${baseAxis.dim}_${baseAxis.index}`;
     var dimIdx = data.getDimensionIndex(data.mapDimension(baseAxis.dim));
     var store = data.getStore();
-    for (var i = 0, cnt = store.count(); i < cnt; ++i) {
+    for (let i = 0, cnt = store.count(); i < cnt; ++i) {
       var value = store.get(dimIdx, i);
       if (!axisValues[key]) {
         // No previous data for the axis
@@ -110,14 +110,14 @@ function getValueAxesMinGaps(barSeries) {
     }
   });
   var axisMinGaps = {};
-  for (var key in axisValues) {
+  for (let key in axisValues) {
     if (axisValues.hasOwnProperty(key)) {
       var valuesInAxis = axisValues[key];
       if (valuesInAxis) {
         // Sort axis values into ascending order to calculate gaps
         valuesInAxis.sort((a, b) => a - b);
         var min = null;
-        for (var j = 1; j < valuesInAxis.length; ++j) {
+        for (let j = 1; j < valuesInAxis.length; ++j) {
           var delta = valuesInAxis[j] - valuesInAxis[j - 1];
           if (delta > 0) {
             // Ignore 0 delta because they are of the same axis value
@@ -382,16 +382,16 @@ export function createProgressiveLayout(seriesType) {
             var value = store.get(stacked ? stackedDimIdx : valueDimIdx, dataIndex);
             var baseValue = store.get(baseDimIdx, dataIndex);
             var baseCoord = valueAxisStart;
-            var startValue = void 0;
+            var startValue;
             // Because of the barMinHeight, we can not use the value in
             // stackResultDimension directly.
             if (stacked) {
               startValue = +value - store.get(valueDimIdx, dataIndex);
             }
-            var x = void 0;
-            var y = void 0;
-            var width = void 0;
-            var height = void 0;
+            var x;
+            var y;
+            var width;
+            var height;
             if (isValueAxisH) {
               var coord = cartesian.dataToPoint([value, baseValue]);
               if (stacked) {

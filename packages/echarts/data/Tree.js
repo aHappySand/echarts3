@@ -64,7 +64,7 @@ const TreeNode = /** @class */ (function () {
     var children = this[options.attr || 'children'];
     var suppressVisitSub;
     order === 'preorder' && (suppressVisitSub = cb.call(context, this));
-    for (var i = 0; !suppressVisitSub && i < children.length; i++) {
+    for (let i = 0; !suppressVisitSub && i < children.length; i++) {
       children[i].eachNode(options, cb, context);
     }
     order === 'postorder' && cb.call(context, this);
@@ -75,7 +75,7 @@ const TreeNode = /** @class */ (function () {
   TreeNode.prototype.updateDepthAndHeight = function (depth) {
     var height = 0;
     this.depth = depth;
-    for (var i = 0; i < this.children.length; i++) {
+    for (let i = 0; i < this.children.length; i++) {
       var child = this.children[i];
       child.updateDepthAndHeight(depth + 1);
       if (child.height > height) {
@@ -88,7 +88,7 @@ const TreeNode = /** @class */ (function () {
     if (this.getId() === id) {
       return this;
     }
-    for (var i = 0, children = this.children, len = children.length; i < len; i++) {
+    for (let i = 0, children = this.children, len = children.length; i < len; i++) {
       var res = children[i].getNodeById(id);
       if (res) {
         return res;
@@ -99,7 +99,7 @@ const TreeNode = /** @class */ (function () {
     if (node === this) {
       return true;
     }
-    for (var i = 0, children = this.children, len = children.length; i < len; i++) {
+    for (let i = 0, children = this.children, len = children.length; i < len; i++) {
       var res = children[i].contains(node);
       if (res) {
         return res;
@@ -189,7 +189,7 @@ const TreeNode = /** @class */ (function () {
   TreeNode.prototype.getChildIndex = function () {
     if (this.parentNode) {
       var children = this.parentNode.children;
-      for (var i = 0; i < children.length; ++i) {
+      for (let i = 0; i < children.length; ++i) {
         if (children[i] === this) {
           return i;
         }
@@ -251,10 +251,10 @@ const Tree = /** @class */ (function () {
   Tree.prototype.update = function () {
     var data = this.data;
     var nodes = this._nodes;
-    for (var i = 0, len = nodes.length; i < len; i++) {
+    for (let i = 0, len = nodes.length; i < len; i++) {
       nodes[i].dataIndex = -1;
     }
-    for (var i = 0, len = data.count(); i < len; i++) {
+    for (let i = 0, len = data.count(); i < len; i++) {
       nodes[data.getRawIndex(i)].dataIndex = i;
     }
   };
@@ -296,7 +296,7 @@ const Tree = /** @class */ (function () {
       tree._nodes.push(node);
       var children = dataNode.children;
       if (children) {
-        for (var i = 0; i < children.length; i++) {
+        for (let i = 0; i < children.length; i++) {
           buildHierarchy(children[i], node);
         }
       }

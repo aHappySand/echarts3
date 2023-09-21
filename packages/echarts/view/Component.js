@@ -16,28 +16,35 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-import Group from '../../zrender/graphic/Group';
+import { Group3D } from '../util/graphic';
 import * as componentUtil from '../util/component';
 import * as clazzUtil from '../util/clazz';
 
 const ComponentView = /** @class */ (function () {
   function ComponentView() {
-    this.group = new Group();
+    this.group = new Group3D();
     this.uid = componentUtil.getUID('viewComponent');
+    return this;
   }
 
+  // eslint-disable-next-line no-unused-vars
   ComponentView.prototype.init = function (ecModel, api) {
   };
+  // eslint-disable-next-line no-unused-vars
   ComponentView.prototype.render = function (model, ecModel, api, payload) {
   };
+  // eslint-disable-next-line no-unused-vars
   ComponentView.prototype.dispose = function (ecModel, api) {
   };
+  // eslint-disable-next-line no-unused-vars
   ComponentView.prototype.updateView = function (model, ecModel, api, payload) {
     // Do nothing;
   };
+  // eslint-disable-next-line no-unused-vars
   ComponentView.prototype.updateLayout = function (model, ecModel, api, payload) {
     // Do nothing;
   };
+  // eslint-disable-next-line no-unused-vars
   ComponentView.prototype.updateVisual = function (model, ecModel, api, payload) {
     // Do nothing;
   };
@@ -45,6 +52,7 @@ const ComponentView = /** @class */ (function () {
    * Hook for toggle blur target series.
    * Can be used in marker for blur or leave blur the markers
    */
+  // eslint-disable-next-line no-unused-vars
   ComponentView.prototype.toggleBlurSeries = function (seriesModels, isBlur, ecModel) {
     // Do nothing;
   };

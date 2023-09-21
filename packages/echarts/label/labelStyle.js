@@ -20,7 +20,7 @@ import { isFunction, retrieve2, extend, keys, trim } from '../../zrender/core/ut
 import { SPECIAL_STATES, DISPLAY_STATES } from '../util/states';
 import { deprecateReplaceLog } from '../util/log';
 import { makeInner, interpolateRawValues } from '../util/model';
-import { initProps, updateProps } from '../util/graphic';
+// import { initProps, updateProps } from '../util/graphic';
 
 const EMPTY_OBJ = {};
 
@@ -30,7 +30,7 @@ function ZRText() {
 }
 
 export function setLabelText(label, labelTexts) {
-  for (var i = 0; i < SPECIAL_STATES.length; i++) {
+  for (let i = 0; i < SPECIAL_STATES.length; i++) {
     var stateName = SPECIAL_STATES[i];
     var text = labelTexts[stateName];
     var state = label.ensureState(stateName);
@@ -62,7 +62,7 @@ function getLabelText(opt, stateModels, interpolatedValue) {
   var statesText = {
     normal: baseText
   };
-  for (var i = 0; i < SPECIAL_STATES.length; i++) {
+  for (let i = 0; i < SPECIAL_STATES.length; i++) {
     var stateName = SPECIAL_STATES[i];
     var stateModel = stateModels[stateName];
     statesText[stateName] = retrieve2(labelFetcher
@@ -78,7 +78,7 @@ function setLabelStyle(targetEl, labelStatesModels, opt, stateSpecified
   opt = opt || EMPTY_OBJ;
   var isSetOnText = targetEl instanceof ZRText;
   var needsCreateText = false;
-  for (var i = 0; i < DISPLAY_STATES.length; i++) {
+  for (let i = 0; i < DISPLAY_STATES.length; i++) {
     var stateModel = labelStatesModels[DISPLAY_STATES[i]];
     if (stateModel && stateModel.getShallow('show')) {
       needsCreateText = true;
@@ -107,7 +107,7 @@ function setLabelStyle(targetEl, labelStatesModels, opt, stateSpecified
       // Always create new
       targetEl.setTextConfig(createTextConfig(normalModel, opt, false));
     }
-    for (var i = 0; i < SPECIAL_STATES.length; i++) {
+    for (let i = 0; i < SPECIAL_STATES.length; i++) {
       var stateName = SPECIAL_STATES[i];
       var stateModel = labelStatesModels[stateName];
       if (stateModel) {
@@ -159,7 +159,7 @@ export function getLabelStatesModels(itemModel, labelName) {
   var statesModels = {
     normal: itemModel.getModel(labelName)
   };
-  for (var i = 0; i < SPECIAL_STATES.length; i++) {
+  for (let i = 0; i < SPECIAL_STATES.length; i++) {
     var stateName = SPECIAL_STATES[i];
     statesModels[stateName] = itemModel.getModel([stateName, labelName]);
   }
@@ -243,7 +243,7 @@ function setTextStyleCommon(textStyle, textStyleModel, opt, isNotNormal, isAttac
   var richResult;
   if (richItemNames) {
     richResult = {};
-    for (var name_1 in richItemNames) {
+    for (let name_1 in richItemNames) {
       if (richItemNames.hasOwnProperty(name_1)) {
         // Cascade is supported in rich.
         var richTextStyle = textStyleModel.getModel(['rich', name_1]);
@@ -293,7 +293,7 @@ function getRichItemNames(textStyleModel) {
     if (rich) {
       richItemNameMap = richItemNameMap || {};
       var richKeys = keys(rich);
-      for (var i = 0; i < richKeys.length; i++) {
+      for (let i = 0; i < richKeys.length; i++) {
         var richKey = richKeys[i];
         richItemNameMap[richKey] = 1;
       }
@@ -324,7 +324,7 @@ function setTokenTextStyle(textStyle, textStyleModel, globalTextStyle, opt, isNo
   var strokeColor = textStyleModel.getShallow('textBorderColor');
   var opacity = retrieve2(textStyleModel.getShallow('opacity'), globalTextStyle.opacity);
   if (fillColor === 'inherit' || fillColor === 'auto') {
-    if (__DEV__) {
+    if (self.__DEV__) {
       if (fillColor === 'auto') {
         deprecateReplaceLog('color: \'auto\'', 'color: \'inherit\'');
       }
@@ -336,7 +336,7 @@ function setTokenTextStyle(textStyle, textStyleModel, globalTextStyle, opt, isNo
     }
   }
   if (strokeColor === 'inherit' || (strokeColor === 'auto')) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       if (strokeColor === 'auto') {
         deprecateReplaceLog('color: \'auto\'', 'color: \'inherit\'');
       }
@@ -387,14 +387,14 @@ function setTokenTextStyle(textStyle, textStyleModel, globalTextStyle, opt, isNo
   // Do not use `getFont` here, because merge should be supported, where
   // part of these properties may be changed in emphasis style, and the
   // others should remain their original value got from normal style.
-  for (var i = 0; i < TEXT_PROPS_WITH_GLOBAL.length; i++) {
+  for (let i = 0; i < TEXT_PROPS_WITH_GLOBAL.length; i++) {
     var key = TEXT_PROPS_WITH_GLOBAL[i];
     var val = retrieve2(textStyleModel.getShallow(key), globalTextStyle[key]);
     if (val != null) {
       textStyle[key] = val;
     }
   }
-  for (var i = 0; i < TEXT_PROPS_SELF.length; i++) {
+  for (let i = 0; i < TEXT_PROPS_SELF.length; i++) {
     var key = TEXT_PROPS_SELF[i];
     var val = textStyleModel.getShallow(key);
     if (val != null) {
@@ -408,7 +408,7 @@ function setTokenTextStyle(textStyle, textStyleModel, globalTextStyle, opt, isNo
     }
   }
   if (!isBlock || !opt.disableBox) {
-    for (var i = 0; i < TEXT_PROPS_BOX.length; i++) {
+    for (let i = 0; i < TEXT_PROPS_BOX.length; i++) {
       var key = TEXT_PROPS_BOX[i];
       var val = textStyleModel.getShallow(key);
       if (val != null) {
@@ -420,7 +420,7 @@ function setTokenTextStyle(textStyle, textStyleModel, globalTextStyle, opt, isNo
       textStyle.borderDash = borderType;
     }
     if ((textStyle.backgroundColor === 'auto' || textStyle.backgroundColor === 'inherit') && inheritColor) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         if (textStyle.backgroundColor === 'auto') {
           deprecateReplaceLog('backgroundColor: \'auto\'', 'backgroundColor: \'inherit\'');
         }
@@ -428,7 +428,7 @@ function setTokenTextStyle(textStyle, textStyleModel, globalTextStyle, opt, isNo
       textStyle.backgroundColor = inheritColor;
     }
     if ((textStyle.borderColor === 'auto' || textStyle.borderColor === 'inherit') && inheritColor) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         if (textStyle.borderColor === 'auto') {
           deprecateReplaceLog('borderColor: \'auto\'', 'borderColor: \'inherit\'');
         }
@@ -493,10 +493,10 @@ export function animateLabelValue(textEl, dataIndex, data, animatableModel, labe
   }
 
   textEl.percent = 0;
-  (labelInnerStore.prevValue == null
-    ? initProps
-    : updateProps)(textEl, {
-    // percent is used to prevent animation from being aborted #15916
-    percent: 1
-  }, animatableModel, dataIndex, null, during);
+  // (labelInnerStore.prevValue == null
+  //   ? initProps
+  //   : updateProps)(textEl, {
+  //   // percent is used to prevent animation from being aborted #15916
+  //   percent: 1
+  // }, animatableModel, dataIndex, null, during);
 }

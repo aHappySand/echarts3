@@ -82,7 +82,7 @@ const AxisView = /** @class */ (function (_super) {
     this._axisPointer = null;
   };
   AxisView.registerAxisPointerClass = function (type, clazz) {
-    if (__DEV__) {
+    if (self.__DEV__) {
       if (axisPointerClazz[type]) {
         throw new Error(`axisPointer ${type} exists`);
       }

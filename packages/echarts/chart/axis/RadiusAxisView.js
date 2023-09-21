@@ -75,7 +75,7 @@ const axisElementBuilders = {
     var lineCount = 0;
     lineColors = lineColors instanceof Array ? lineColors : [lineColors];
     var splitLines = [];
-    for (var i = 0; i < ticksCoords.length; i++) {
+    for (let i = 0; i < ticksCoords.length; i++) {
       var colorIndex = (lineCount++) % lineColors.length;
       splitLines[colorIndex] = splitLines[colorIndex] || [];
       splitLines[colorIndex].push(new graphic.Circle({
@@ -89,7 +89,7 @@ const axisElementBuilders = {
     }
     // Simple optimization
     // Batching the lines if color are the same
-    for (var i = 0; i < splitLines.length; i++) {
+    for (let i = 0; i < splitLines.length; i++) {
       group.add(graphic.mergePath(splitLines[i], {
         style: zrUtil.defaults({
           stroke: lineColors[i % lineColors.length],
@@ -106,8 +106,8 @@ const axisElementBuilders = {
     var minorSplitLineModel = radiusAxisModel.getModel('minorSplitLine');
     var lineStyleModel = minorSplitLineModel.getModel('lineStyle');
     var lines = [];
-    for (var i = 0; i < minorTicksCoords.length; i++) {
-      for (var k = 0; k < minorTicksCoords[i].length; k++) {
+    for (let i = 0; i < minorTicksCoords.length; i++) {
+      for (let k = 0; k < minorTicksCoords[i].length; k++) {
         lines.push(new graphic.Circle({
           shape: {
             cx: polar.cx,
@@ -135,7 +135,7 @@ const axisElementBuilders = {
     areaColors = areaColors instanceof Array ? areaColors : [areaColors];
     var splitAreas = [];
     var prevRadius = ticksCoords[0].coord;
-    for (var i = 1; i < ticksCoords.length; i++) {
+    for (let i = 1; i < ticksCoords.length; i++) {
       var colorIndex = (lineCount++) % areaColors.length;
       splitAreas[colorIndex] = splitAreas[colorIndex] || [];
       splitAreas[colorIndex].push(new graphic.Sector({
@@ -153,7 +153,7 @@ const axisElementBuilders = {
     }
     // Simple optimization
     // Batching the lines if color are the same
-    for (var i = 0; i < splitAreas.length; i++) {
+    for (let i = 0; i < splitAreas.length; i++) {
       group.add(graphic.mergePath(splitAreas[i], {
         style: zrUtil.defaults({
           fill: areaColors[i % areaColors.length]

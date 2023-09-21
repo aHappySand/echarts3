@@ -62,7 +62,7 @@ export function summarizeDimensions(data, schema) {
     var dimItem = data.getDimensionInfo(dimName);
     var coordDim = dimItem.coordDim;
     if (coordDim) {
-      if (__DEV__) {
+      if (self.__DEV__) {
         assert(VISUAL_DIMENSIONS.get(coordDim) == null);
       }
       var coordDimIndex = dimItem.coordDimIndex;

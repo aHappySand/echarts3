@@ -1,29 +1,30 @@
 import { __extends } from 'tslib';
 import * as zrUtil from '../core/util.js';
-import Element from '../Element.js';
 import BoundingRect from '../core/BoundingRect.js';
+import Element from '../Element';
 
-const Group = (function (_super) {
-  __extends(Group, _super);
+const ZRGroup = (function (_super) {
+  __extends(ZRGroup, _super);
 
-  function Group(opts) {
-    var _this = _super.call(this) || this;
+  function ZRGroup(opts) {
+    var _this = _super.call(this, opts) || this;
+    if (!this.ecModel) {
+      throw new Error('ecModel must be passed');
+    }
     _this.isGroup = true;
     _this._children = [];
-    _this.attr(opts);
     return _this;
   }
-
-  Group.prototype.childrenRef = function () {
+  ZRGroup.prototype.childrenRef = function () {
     return this._children;
   };
-  Group.prototype.children = function () {
+  ZRGroup.prototype.children = function () {
     return this._children.slice();
   };
-  Group.prototype.childAt = function (idx) {
+  ZRGroup.prototype.childAt = function (idx) {
     return this._children[idx];
   };
-  Group.prototype.childOfName = function (name) {
+  ZRGroup.prototype.childOfName = function (name) {
     var children = this._children;
     for (var i = 0; i < children.length; i++) {
       if (children[i].name === name) {
@@ -31,10 +32,10 @@ const Group = (function (_super) {
       }
     }
   };
-  Group.prototype.childCount = function () {
+  ZRGroup.prototype.childCount = function () {
     return this._children.length;
   };
-  Group.prototype.add = function (child) {
+  ZRGroup.prototype.add = function (child) {
     if (child) {
       if (child !== this && child.parent !== this) {
         this._children.push(child);
@@ -42,13 +43,14 @@ const Group = (function (_super) {
       }
       if (process.env.NODE_ENV !== 'production') {
         if (child.__hostTarget) {
+          // eslint-disable-next-line no-throw-literal
           throw 'This elemenet has been used as an attachment';
         }
       }
     }
     return this;
   };
-  Group.prototype.addBefore = function (child, nextSibling) {
+  ZRGroup.prototype.addBefore = function (child, nextSibling) {
     if (child && child !== this && child.parent !== this &&
       nextSibling && nextSibling.parent === this) {
       var children = this._children;
@@ -60,40 +62,33 @@ const Group = (function (_super) {
     }
     return this;
   };
-  Group.prototype.replace = function (oldChild, newChild) {
+  ZRGroup.prototype.replace = function (oldChild, newChild) {
     var idx = zrUtil.indexOf(this._children, oldChild);
     if (idx >= 0) {
       this.replaceAt(newChild, idx);
     }
     return this;
   };
-  Group.prototype.replaceAt = function (child, index) {
+  ZRGroup.prototype.replaceAt = function (child, index) {
     var children = this._children;
     var old = children[index];
     if (child && child !== this && child.parent !== this && child !== old) {
       children[index] = child;
       old.parent = null;
-      var zr = this.__zr;
-      if (zr) {
-        old.removeSelfFromZr(zr);
-      }
       this._doAdd(child);
     }
     return this;
   };
-  Group.prototype._doAdd = function (child) {
+  ZRGroup.prototype._doAdd = function (child) {
     if (child.parent) {
       child.parent.remove(child);
     }
-    child.parent = this;
-    var zr = this.__zr;
-    if (zr && zr !== child.__zr) {
-      child.addSelfToZr(zr);
+    if (this.ecModel) {
+      this.ecModel.scheduler.api.getZr().refresh();
     }
-    zr && zr.refresh();
+    child.parent = this;
   };
-  Group.prototype.remove = function (child) {
-    var zr = this.__zr;
+  ZRGroup.prototype.remove = function (child) {
     var children = this._children;
     var idx = zrUtil.indexOf(children, child);
     if (idx < 0) {
@@ -101,26 +96,18 @@ const Group = (function (_super) {
     }
     children.splice(idx, 1);
     child.parent = null;
-    if (zr) {
-      child.removeSelfFromZr(zr);
-    }
-    zr && zr.refresh();
     return this;
   };
-  Group.prototype.removeAll = function () {
+  ZRGroup.prototype.removeAll = function () {
     var children = this._children;
-    var zr = this.__zr;
     for (var i = 0; i < children.length; i++) {
       var child = children[i];
-      if (zr) {
-        child.removeSelfFromZr(zr);
-      }
       child.parent = null;
     }
     children.length = 0;
     return this;
   };
-  Group.prototype.eachChild = function (cb, context) {
+  ZRGroup.prototype.eachChild = function (cb, context) {
     var children = this._children;
     for (var i = 0; i < children.length; i++) {
       var child = children[i];
@@ -128,7 +115,7 @@ const Group = (function (_super) {
     }
     return this;
   };
-  Group.prototype.traverse = function (cb, context) {
+  ZRGroup.prototype.traverse = function (cb, context) {
     for (var i = 0; i < this._children.length; i++) {
       var child = this._children[i];
       var stopped = cb.call(context, child);
@@ -138,21 +125,7 @@ const Group = (function (_super) {
     }
     return this;
   };
-  Group.prototype.addSelfToZr = function (zr) {
-    _super.prototype.addSelfToZr.call(this, zr);
-    for (var i = 0; i < this._children.length; i++) {
-      var child = this._children[i];
-      child.addSelfToZr(zr);
-    }
-  };
-  Group.prototype.removeSelfFromZr = function (zr) {
-    _super.prototype.removeSelfFromZr.call(this, zr);
-    for (var i = 0; i < this._children.length; i++) {
-      var child = this._children[i];
-      child.removeSelfFromZr(zr);
-    }
-  };
-  Group.prototype.getBoundingRect = function (includeChildren) {
+  ZRGroup.prototype.getBoundingRect = function (includeChildren) {
     var tmpRect = new BoundingRect(0, 0, 0, 0);
     var children = includeChildren || this._children;
     var tmpMat = [];
@@ -175,7 +148,7 @@ const Group = (function (_super) {
     }
     return rect || tmpRect;
   };
-  return Group;
+  return ZRGroup;
 }(Element));
-Group.prototype.type = 'group';
-export default Group;
+
+export default ZRGroup;
